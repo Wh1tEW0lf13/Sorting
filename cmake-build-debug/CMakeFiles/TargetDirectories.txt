@@ -1,0 +1,3 @@
+C:/Users/Wh1tEW0lf13/Desktop/Studia/ProjectMrozo1/cmake-build-debug/CMakeFiles/ProjectMrozo1.dir
+C:/Users/Wh1tEW0lf13/Desktop/Studia/ProjectMrozo1/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Wh1tEW0lf13/Desktop/Studia/ProjectMrozo1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
