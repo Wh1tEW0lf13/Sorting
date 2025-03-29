@@ -51,7 +51,10 @@ Vector<T> FileReader(const std::string& path) {  //Reading values from file
     file.close();
     return notSorted;
 }
-
+template<class T>
+void DrunkStudent(Vector<T> *border) {
+    //Koncjepcja moja jest taka, że pijany student wymyślił sobie, że przełoży każdą liczbę na początek, która jest opisana ciągiem a(n)=13n gdzie n>0
+}
 
 int main(const int argc, char* argv[0]) {
     const std::string firstArg = argv[1];
@@ -106,9 +109,10 @@ int main(const int argc, char* argv[0]) {
                 }
                 default: {
                     Error();
+                    break;
                 }
-                break;
             }
+            break;
         }
         else if (firstArg == "--help") {
             Helper();
