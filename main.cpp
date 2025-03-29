@@ -52,24 +52,63 @@ Vector<T> FileReader(const std::string& path) {  //Reading values from file
     return notSorted;
 }
 
+
 int main(const int argc, char* argv[0]) {
     const std::string firstArg = argv[1];
     const int algorithmType = std::stoi(argv[2]);
     const int dataType = std::stoi(argv[3]);
-    const std::string inputFile = argv[4];
+    const std::string inputFileOrSize = argv[4];
     const std::string outputFile = argv[5];
     while (true) {
         if (firstArg == "--file") {
-            if (dataType == 0) {
-                const Vector<int> noSorted = FileReader<int>(inputFile);
+            switch (dataType) {
+                case 0: {
+                    const Vector<int> noSorted = FileReader<int>(inputFileOrSize);
+                    break;
+                }
+                case 1: {
+                    const Vector<float> noSorted = FileReader<float>(inputFileOrSize);
+                }
+                case 2: {
+                    const Vector<double> noSorted = FileReader<double>(inputFileOrSize);
+                }
+                case 3: {
+                    const Vector<char> noSorted = FileReader<char>(inputFileOrSize);
+                }
+                default: {
+                    Error();
+                    continue;
+                }
             }
-
             break;
         }
         else if (firstArg == "--test") {
-            std::cout<<"Here will be test";
-
-            break;
+            switch (dataType) {
+                case 0: {
+                    Vector<int> noSorted;
+                    noSorted.fillRandom(stoi(inputFileOrSize));
+                    break;
+                }
+                case 1: {
+                    Vector<float> noSorted;
+                    noSorted.fillRandom(stoi(inputFileOrSize));
+                    break;
+                }
+                case 2: {
+                    Vector<double> noSorted;
+                    noSorted.fillRandom(stoi(inputFileOrSize));
+                    break;
+                }
+                case 3: {
+                    Vector<char> noSorted;
+                    noSorted.fillRandom(stoi(inputFileOrSize));
+                    break;
+                }
+                default: {
+                    Error();
+                }
+                break;
+            }
         }
         else if (firstArg == "--help") {
             Helper();
