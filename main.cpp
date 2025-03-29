@@ -26,7 +26,7 @@ void Helper() {
 
 template<class T>
 Vector<T> *ValuesSaver(std::fstream file) {
-    auto *notSorted = new Vector<int>();
+    auto *notSorted = new Vector<T>();
     std::string line;
     while (!file.eof()) {
         getline(file,line);
