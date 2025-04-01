@@ -66,7 +66,7 @@ int main(const int argc, char* argv[0]) {
         if (firstArg == "--file") {
             switch (dataType) {
                 case 0: {
-                    const Vector<int> noSorted = FileReader<int>(inputFileOrSize);
+                    const Vector<int> noSorted = FileReader<int>(inputFileOrSize);    //dodać do konstruktora i destruktora std::cout
                     break;
                 }
                 case 1: {
