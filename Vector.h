@@ -12,18 +12,18 @@ private:
     T* border;
     size_t size;    //Size of the border
     size_t newPosition; //New value position
-    void resize();
+    void Resize();
 public:
     void InsertSort();
 
     Vector();
     ~Vector();
-    void add(const T& value);
-    [[nodiscard]] size_t getSize() const;
+    void Add(const T& value);
+    [[nodiscard]] size_t GetSize() const;
 
-    T fillRandom(int size);
+    T FillRandom(int size);
 
-    T getValue(int index) const;
+    T GetValue(int index) const;
 };
 
 template<typename T>
@@ -56,14 +56,14 @@ Vector<T>::~Vector() {
 }
 
 template<typename T>
-void Vector<T>::add(const T &value) {
-    resize();
+void Vector<T>::Add(const T &value) {
+    Resize();
     border[this->newPosition] = value;
     ++this->newPosition;
 }
 
 template<typename T>
-void Vector<T>::resize() {  //Here I increase size of the border, to put new value here
+void Vector<T>::Resize() {  //Here I increase size of the border, to put new value here
     size++;
     T* newBorder = new T[size];
     for (size_t i = 0; i < size; i++) {
@@ -74,7 +74,7 @@ void Vector<T>::resize() {  //Here I increase size of the border, to put new val
 }
 
 template<typename T>
-T Vector<T>::getValue(int index) const {    //Getting value here
+T Vector<T>::GetValue(int index) const {    //Getting value here
     if (index>=size) {
         std::cout<<"IndexOutOfBoundException";
         exit(-2137);
@@ -83,15 +83,15 @@ T Vector<T>::getValue(int index) const {    //Getting value here
 }
 
 template<typename T>
-size_t Vector<T>::getSize() const {   //Simple getter for size
+size_t Vector<T>::GetSize() const {   //Simple getter for size
     return size;
 }
 
 template<typename T>
-T Vector<T>::fillRandom(const int size) {   //It fills randomly the border with random values
+T Vector<T>::FillRandom(const int size) {   //It fills randomly the border with random values
     srand(time(nullptr));
     for (int i = 0; i < size; i++) {
-        add(rand() % size);
+        Add(rand() % size);
     }
     return 0;
 }

@@ -52,8 +52,18 @@ Vector<T> FileReader(const std::string& path) {  //Reading values from file
     return notSorted;
 }
 template<class T>
-void DrunkStudent(Vector<T> *border) {
-    //Koncjepcja moja jest taka, że pijany student wymyślił sobie, że przełoży każdą liczbę na początek, która jest opisana ciągiem a(n)=13n gdzie n>0
+void DrunkStudent(Vector<T> *border, float drinkParameter) {
+    int bSize = border->size();
+    int pos = 0;
+    if (drinkParameter != 0) {
+        drinkParameter *= 10;
+    }
+    else
+        drinkParameter = 1;
+    for (int i = 13*drinkParameter; i < bSize; i+=13*drinkParameter) {
+        T temp = border->getValue(i);
+
+    }
 }
 
 int main(const int argc, char* argv[0]) {
@@ -89,22 +99,22 @@ int main(const int argc, char* argv[0]) {
             switch (dataType) {
                 case 0: {
                     Vector<int> noSorted;
-                    noSorted.fillRandom(stoi(inputFileOrSize));
+                    noSorted.FillRandom(stoi(inputFileOrSize));
                     break;
                 }
                 case 1: {
                     Vector<float> noSorted;
-                    noSorted.fillRandom(stoi(inputFileOrSize));
+                    noSorted.FillRandom(stoi(inputFileOrSize));
                     break;
                 }
                 case 2: {
                     Vector<double> noSorted;
-                    noSorted.fillRandom(stoi(inputFileOrSize));
+                    noSorted.FillRandom(stoi(inputFileOrSize));
                     break;
                 }
                 case 3: {
                     Vector<char> noSorted;
-                    noSorted.fillRandom(stoi(inputFileOrSize));
+                    noSorted.FillRandom(stoi(inputFileOrSize));
                     break;
                 }
                 default: {
