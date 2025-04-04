@@ -3,6 +3,8 @@
 #include <string>
 #include "Vector.h"
 #include "Timer.h"
+#include "SortingAlgorythms/InsertionSort.h"
+
 void Error() {
     std::cout<<"Arguments are wrong"<<std::endl;
 }
@@ -30,7 +32,7 @@ Vector<T> *ValuesSaver(std::fstream file) {
     std::string line;
     while (!file.eof()) {
         getline(file,line);
-        notSorted->add(std::stoi(line));
+        notSorted->Add(std::stoi(line));
     }
     return notSorted;
 }
@@ -76,7 +78,7 @@ int main(const int argc, char* argv[0]) {
         if (firstArg == "--file") {
             switch (dataType) {
                 case 0: {
-                    const Vector<int> noSorted = FileReader<int>(inputFileOrSize);    //dodać do konstruktora i destruktora std::cout
+                    const Vector<int> noSorted = FileReader<int>(inputFileOrSize);
                     break;
                 }
                 case 1: {

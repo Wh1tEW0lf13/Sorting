@@ -67,6 +67,12 @@ build CMakeFiles/ProjectMrozo1.dir/Timer.cpp.obj: CXX_COMPILER__ProjectMrozo1_un
   OBJECT_DIR = CMakeFiles\ProjectMrozo1.dir
   OBJECT_FILE_DIR = CMakeFiles\ProjectMrozo1.dir
 
+build CMakeFiles/ProjectMrozo1.dir/SortingAlgorythms/InsertionSort.cpp.obj: CXX_COMPILER__ProjectMrozo1_unscanned_Debug C$:/Users/Wh1tEW0lf13/Desktop/Studia/ProjectMrozo1/SortingAlgorythms/InsertionSort.cpp || cmake_object_order_depends_target_ProjectMrozo1
+  DEP_FILE = CMakeFiles\ProjectMrozo1.dir\SortingAlgorythms\InsertionSort.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\ProjectMrozo1.dir
+  OBJECT_FILE_DIR = CMakeFiles\ProjectMrozo1.dir\SortingAlgorythms
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target ProjectMrozo1
@@ -75,7 +81,7 @@ build CMakeFiles/ProjectMrozo1.dir/Timer.cpp.obj: CXX_COMPILER__ProjectMrozo1_un
 #############################################
 # Link the executable ProjectMrozo1.exe
 
-build ProjectMrozo1.exe: CXX_EXECUTABLE_LINKER__ProjectMrozo1_Debug CMakeFiles/ProjectMrozo1.dir/main.cpp.obj CMakeFiles/ProjectMrozo1.dir/Vector.cpp.obj CMakeFiles/ProjectMrozo1.dir/Timer.cpp.obj
+build ProjectMrozo1.exe: CXX_EXECUTABLE_LINKER__ProjectMrozo1_Debug CMakeFiles/ProjectMrozo1.dir/main.cpp.obj CMakeFiles/ProjectMrozo1.dir/Vector.cpp.obj CMakeFiles/ProjectMrozo1.dir/Timer.cpp.obj CMakeFiles/ProjectMrozo1.dir/SortingAlgorythms/InsertionSort.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\ProjectMrozo1.dir

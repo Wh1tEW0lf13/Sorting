@@ -14,7 +14,6 @@ private:
     size_t newPosition; //New value position
     void Resize();
 public:
-    void InsertSort();
 
     Vector();
     ~Vector();
@@ -25,23 +24,6 @@ public:
 
     T GetValue(int index) const;
 };
-
-template<typename T>
-void Vector<T>::InsertSort() {
-    for (int i = 1; i<size; i++) {
-        int j = i - 1;
-        while (j >= 0) {
-            if (border[j] > border[j+1]) {
-                int temp = border[j];
-                border[j] = border[j+1];
-                border[j+1] = temp;
-                j--;
-            }
-            else
-                break;
-        }
-    }
-}
 
 template<typename T>
 Vector<T>::Vector() {

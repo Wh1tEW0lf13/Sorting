@@ -15,10 +15,7 @@ public:
     static void reset(); // Reset timer.
     static int start(); // Start timer.
     static int stop(); // Stop timer.
-    static int result(); // Return elapsed time [ms].
-
-private:
-    static void TimerCounter();
+    static time_t result(); // Return elapsed time [ms].
 };
 
 

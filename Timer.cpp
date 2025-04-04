@@ -7,33 +7,24 @@
 #include <iostream>
 #include <ostream>
 #include <thread>
-time_t t = 0;
-std::thread counter;
-bool isStopped = false;
+time_t startTime, stopTime, timeResult;
 void Timer::reset() {
-    t = 0;
+    timeResult = 0.0;
 }
 Timer::Timer() {
     reset();
 }
 
-void Timer::TimerCounter() {
-    while (!isStopped) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-        t++;
-    }
-}
-
 int Timer::start() {
-    std::thread counter(TimerCounter);
-    counter.detach();
-    return 0;
+    time (&startTime);
+    return 1;
 }
 int Timer::stop() {
-    isStopped = true;
+    time (&stopTime);
+    timeResult = stopTime-startTime;
     return 0;
 }
-int Timer::result() {
-    return t;
+time_t Timer::result() {
+    return timeResult;
 }
 
