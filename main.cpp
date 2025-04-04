@@ -67,7 +67,8 @@ void DrunkStudent(Vector<T> *border, float drinkParameter) {
 
     }
 }
-
+template<typename  T>
+InsertionSort<T> insertionSort;
 int main(const int argc, char* argv[0]) {
     const std::string firstArg = argv[1];
     const int algorithmType = std::stoi(argv[2]);
@@ -102,6 +103,7 @@ int main(const int argc, char* argv[0]) {
                 case 0: {
                     Vector<int> noSorted;
                     noSorted.FillRandom(stoi(inputFileOrSize));
+                    insertionSort<int>.InsertionSorting(&noSorted);
                     break;
                 }
                 case 1: {

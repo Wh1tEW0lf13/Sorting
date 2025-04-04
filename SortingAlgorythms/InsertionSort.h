@@ -9,9 +9,24 @@
 template<typename T>
 class InsertionSort {
 public:
-   void InsertionSorting(Vector<T> *border);
+   static void InsertionSorting(Vector<T> *border);
 };
 
-
+template<typename T>
+void InsertionSort<T>::InsertionSorting(Vector<T> *border) {
+   for (int i = 1; i<border->GetSize(); i++) {
+      int j = i - 1;
+      while (j >= 0) {
+         if (border->GetValue(j) > border->GetValue(j+1)) {
+            int temp = border[j];
+            border[j] = border[j+1];
+            border[j+1] = temp;
+            j--;
+         }
+         else
+            break;
+      }
+   }
+}
 
 #endif //INSERTIONSORT_H

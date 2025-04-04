@@ -22,6 +22,8 @@ public:
 
     T FillRandom(int size);
 
+    void ChangeValue(int pointer);
+
     T GetValue(int index) const;
 };
 
@@ -76,6 +78,10 @@ T Vector<T>::FillRandom(const int size) {   //It fills randomly the border with 
         Add(rand() % size);
     }
     return 0;
+}
+template<typename T>
+void Vector<T>::ChangeValue(int pointer) {
+
 }
 
 #endif
