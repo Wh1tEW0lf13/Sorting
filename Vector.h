@@ -5,7 +5,8 @@
 #define VECTOR_H
 
 #include <iostream>
-#include <cstdlib>
+#include <random>
+#include <limits>
 template <typename T>
 class Vector {
 private:
@@ -22,7 +23,7 @@ public:
 
     T FillRandom(int size);
 
-    void ChangeValue(int pointer);
+    void ChangeValue(int pointer, T value);
 
     T GetValue(int index) const;
 };
@@ -73,15 +74,34 @@ size_t Vector<T>::GetSize() const {   //Simple getter for size
 
 template<typename T>
 T Vector<T>::FillRandom(const int size) {   //It fills randomly the border with random values
-    srand(time(nullptr));
+    std::random_device rd;
+    std::mt19937 gen(rd());
     for (int i = 0; i < size; i++) {
-        Add(rand() % size);
+        if (std::is_same_v<T, int>) {
+            std::uniform_int_distribution<> dis(std::numeric_limits<int>::denorm_min(), std::numeric_limits<int>::max());
+            Add(dis(gen));
+        }
+        else if (std::is_same_v<T, float>) {
+            std::uniform_real_distribution<> dis(std::numeric_limits<float>::denorm_min(), std::numeric_limits<float>::max());
+            Add(dis(gen));
+        }
+        else if (std::is_same_v<T, double>) {
+            std::uniform_real_distribution<> dis(std::numeric_limits<double>::denorm_min(), std::numeric_limits<double>::max());
+            Add(dis(gen));
+        }
+        else if (std::is_same_v<T, char>) {
+            std::uniform_real_distribution<> dis(std::numeric_limits<char>::denorm_min(), std::numeric_limits<char>::max());
+            Add(dis(gen));
+        }
+        else
+            std::cout<<"Bad type";
     }
+
     return 0;
 }
 template<typename T>
-void Vector<T>::ChangeValue(int pointer) {
-
+void Vector<T>::ChangeValue(int pointer, T value) {
+    border[pointer] = value;
 }
 
 #endif

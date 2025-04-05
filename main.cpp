@@ -4,6 +4,7 @@
 #include "Vector.h"
 #include "Timer.h"
 #include "SortingAlgorythms/InsertionSort.h"
+#include "SortingAlgorythms/QuickSort.h"
 
 void Error() {
     std::cout<<"Arguments are wrong"<<std::endl;
@@ -55,26 +56,30 @@ Vector<T> FileReader(const std::string& path) {  //Reading values from file
 }
 template<class T>
 void DrunkStudent(Vector<T> *border, float drinkParameter) {
-    int bSize = border->size();
     int pos = 0;
     if (drinkParameter != 0) {
         drinkParameter *= 10;
     }
     else
         drinkParameter = 1;
-    for (int i = 13*drinkParameter; i < bSize; i+=13*drinkParameter) {
+    for (int i = 13*drinkParameter; i < border->size(); i+=13*drinkParameter) {
         T temp = border->getValue(i);
-
+        border->ChangeValue(i, border->getValue(pos));
+        border->ChangeValue(pos, temp);
+        pos++;
     }
 }
-template<typename  T>
+template <typename T>
 InsertionSort<T> insertionSort;
+template <typename T>
+QuickSort<T> quickSort;
 int main(const int argc, char* argv[0]) {
     const std::string firstArg = argv[1];
     const int algorithmType = std::stoi(argv[2]);
     const int dataType = std::stoi(argv[3]);
     const std::string inputFileOrSize = argv[4];
     const std::string outputFile = argv[5];
+
     while (true) {
         if (firstArg == "--file") {
             switch (dataType) {
@@ -103,22 +108,37 @@ int main(const int argc, char* argv[0]) {
                 case 0: {
                     Vector<int> noSorted;
                     noSorted.FillRandom(stoi(inputFileOrSize));
-                    insertionSort<int>.InsertionSorting(&noSorted);
+                    //insertionSort<int>.InsertionSorting(&noSorted);
+                    for (int i = 0; i<5; i++) {
+                        std::cout<<noSorted.GetValue(i)<<" ";
+                    }
+                    std::cout<<std::endl;
+                    quickSort<int>.QuickSorting(&noSorted);
+                    for (int i = 0; i<5; i++) {
+                        std::cout<<noSorted.GetValue(i)<<" ";
+                    }
                     break;
                 }
                 case 1: {
                     Vector<float> noSorted;
                     noSorted.FillRandom(stoi(inputFileOrSize));
+                    insertionSort<float>.InsertionSorting(&noSorted);
                     break;
                 }
                 case 2: {
                     Vector<double> noSorted;
                     noSorted.FillRandom(stoi(inputFileOrSize));
+
+                    insertionSort<double>.InsertionSorting(&noSorted);
                     break;
                 }
                 case 3: {
                     Vector<char> noSorted;
                     noSorted.FillRandom(stoi(inputFileOrSize));
+                    for (int i = 0; i<5; i++) {
+                        std::cout<<noSorted.GetValue(i)<<" ";
+                    }
+                    insertionSort<char>.InsertionSorting(&noSorted);
                     break;
                 }
                 default: {

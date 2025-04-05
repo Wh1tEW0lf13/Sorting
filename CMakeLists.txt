@@ -10,4 +10,6 @@ add_executable(ProjectMrozo1 main.cpp
         Timer.h
         SortingAlgorythms/InsertionSort.cpp
         SortingAlgorythms/InsertionSort.h
+        SortingAlgorythms/QuickSort.cpp
+        SortingAlgorythms/QuickSort.h
 )

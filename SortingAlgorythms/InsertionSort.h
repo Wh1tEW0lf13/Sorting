@@ -15,14 +15,15 @@ public:
 template<typename T>
 void InsertionSort<T>::InsertionSorting(Vector<T> *border) {
    for (int i = 1; i<border->GetSize(); i++) {
-      int j = i - 1;
+
+      int j = i-1;
       while (j >= 0) {
          if (border->GetValue(j) > border->GetValue(j+1)) {
-            int temp = border[j];
-            border[j] = border[j+1];
-            border[j+1] = temp;
+            int temp = border->GetValue(j);
+            border->ChangeValue(j,border->GetValue(j+1));
+            border->ChangeValue(j+1,temp);
             j--;
-         }
+        }
          else
             break;
       }
