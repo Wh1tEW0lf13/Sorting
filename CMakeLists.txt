@@ -8,8 +8,7 @@ add_executable(ProjectMrozo1 main.cpp
         Vector.h
         Timer.cpp
         Timer.h
-        SortingAlgorythms/InsertionSort.cpp
         SortingAlgorythms/InsertionSort.h
-        SortingAlgorythms/QuickSort.cpp
         SortingAlgorythms/QuickSort.h
+        SortingAlgorythms/HeapifySort.h
 )

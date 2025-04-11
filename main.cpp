@@ -3,6 +3,7 @@
 #include <string>
 #include "Vector.h"
 #include "Timer.h"
+#include "SortingAlgorythms/HeapifySort.h"
 #include "SortingAlgorythms/InsertionSort.h"
 #include "SortingAlgorythms/QuickSort.h"
 
@@ -73,6 +74,8 @@ template <typename T>
 InsertionSort<T> insertionSort;
 template <typename T>
 QuickSort<T> quickSort;
+template <typename T>
+HeapifySort<T> heapifySort;
 int main(const int argc, char* argv[0]) {
     const std::string firstArg = argv[1];
     const int algorithmType = std::stoi(argv[2]);
@@ -109,12 +112,12 @@ int main(const int argc, char* argv[0]) {
                     Vector<int> noSorted;
                     noSorted.FillRandom(stoi(inputFileOrSize));
                     //insertionSort<int>.InsertionSorting(&noSorted);
-                    for (int i = 0; i<5; i++) {
+                    for (int i = 0; i<noSorted.GetSize(); i++) {
                         std::cout<<noSorted.GetValue(i)<<" ";
                     }
                     std::cout<<std::endl;
-                    quickSort<int>.QuickSorting(&noSorted);
-                    for (int i = 0; i<5; i++) {
+                    heapifySort<int>.HeapifySorting(&noSorted);
+                    for (int i = 0; i < noSorted.GetSize(); i++) {
                         std::cout<<noSorted.GetValue(i)<<" ";
                     }
                     break;

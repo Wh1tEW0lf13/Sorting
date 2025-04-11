@@ -26,6 +26,8 @@ public:
     void ChangeValue(int pointer, T value);
 
     T GetValue(int index) const;
+
+    void Remove(int index);
 };
 
 template<typename T>
@@ -45,6 +47,19 @@ void Vector<T>::Add(const T &value) {
     Resize();
     border[this->newPosition] = value;
     ++this->newPosition;
+}
+template<typename T>
+void Vector<T>::Remove(int index) {
+    size--;
+    T* newBorder = new T[size];
+    for (int i = 0; i < index; i++) {
+        newBorder[i] = border[i];
+    }
+    for (int i = index; i < size-1; i++) {
+        newBorder[i] = border[i+1];
+    }
+    delete[] border;
+    border = newBorder;
 }
 
 template<typename T>
