@@ -4,11 +4,11 @@ project(ProjectMrozo1)
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(ProjectMrozo1 main.cpp
-        Vector.cpp
         Vector.h
         Timer.cpp
         Timer.h
         SortingAlgorythms/InsertionSort.h
         SortingAlgorythms/QuickSort.h
         SortingAlgorythms/HeapifySort.h
+        SortingAlgorythms/ShellSort.h
 )

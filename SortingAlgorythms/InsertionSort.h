@@ -15,7 +15,6 @@ public:
 template<typename T>
 void InsertionSort<T>::InsertionSorting(Vector<T> *border) {
    for (int i = 1; i<border->GetSize(); i++) {
-
       int j = i-1;
       while (j >= 0) {
          if (border->GetValue(j) > border->GetValue(j+1)) {

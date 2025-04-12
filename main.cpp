@@ -6,6 +6,7 @@
 #include "SortingAlgorythms/HeapifySort.h"
 #include "SortingAlgorythms/InsertionSort.h"
 #include "SortingAlgorythms/QuickSort.h"
+#include "SortingAlgorythms/ShellSort.h"
 
 void Error() {
     std::cout<<"Arguments are wrong"<<std::endl;
@@ -76,6 +77,8 @@ template <typename T>
 QuickSort<T> quickSort;
 template <typename T>
 HeapifySort<T> heapifySort;
+template <typename T>
+ShellSort<T> shellSort;
 int main(const int argc, char* argv[0]) {
     const std::string firstArg = argv[1];
     const int algorithmType = std::stoi(argv[2]);
@@ -116,7 +119,8 @@ int main(const int argc, char* argv[0]) {
                         std::cout<<noSorted.GetValue(i)<<" ";
                     }
                     std::cout<<std::endl;
-                    heapifySort<int>.HeapifySorting(&noSorted);
+                    //heapifySort<int>.HeapifySorting(&noSorted);
+                    shellSort<int>.ShellSorting(&noSorted);
                     for (int i = 0; i < noSorted.GetSize(); i++) {
                         std::cout<<noSorted.GetValue(i)<<" ";
                     }
