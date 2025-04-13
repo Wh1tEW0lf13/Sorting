@@ -1,11 +1,12 @@
 # ninja log v6
-14	669	7660859903746678	CMakeFiles/ProjectMrozo1.dir/main.cpp.obj	2dbee46398fafbb6
-670	760	7660859910314395	ProjectMrozo1.exe	97788eaf67d87da2
+15	728	7661196108007836	CMakeFiles/ProjectMrozo1.dir/main.cpp.obj	2dbee46398fafbb6
+728	982	7661196115146274	ProjectMrozo1.exe	5e1e9476219eaad8
 23	488	7660853504463508	CMakeFiles/ProjectMrozo1.dir/Vector.cpp.obj	12fc456c12933c5f
 99	740	7654851401229979	CMakeFiles/ProjectMrozo1.dir/Timer.cpp.obj	5f7c5a5b0bfbe05c
 15	479	7655666390426355	CMakeFiles/ProjectMrozo1.dir/SortingAlgorythms/InsertionSort.cpp.obj	3ccdd44ae7bd6731
 18	480	7655666390456666	CMakeFiles/ProjectMrozo1.dir/SortingAlgorythms/QuickSort.cpp.obj	339c9bdb1581b675
-2	705	7661196107336769	build.ninja	4436766e6182efa3
-15	263	7661196107336769	build.ninja	4436766e6182efa3
-15	728	7661196108007836	CMakeFiles/ProjectMrozo1.dir/main.cpp.obj	2dbee46398fafbb6
-728	982	7661196115146274	ProjectMrozo1.exe	5e1e9476219eaad8
+15	263	7661200585016141	build.ninja	4436766e6182efa3
+3	819	7662631202547058	CMakeFiles/ProjectMrozo1.dir/main.cpp.obj	2dbee46398fafbb6
+819	1243	7662631210720339	ProjectMrozo1.exe	5e1e9476219eaad8
+40	879	7662761992454624	CMakeFiles/ProjectMrozo1.dir/main.cpp.obj	2dbee46398fafbb6
+879	1192	7662762000851923	ProjectMrozo1.exe	5e1e9476219eaad8

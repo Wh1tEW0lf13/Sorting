@@ -121,6 +121,7 @@ int main(const int argc, char* argv[0]) {
                     std::cout<<std::endl;
                     //heapifySort<int>.HeapifySorting(&noSorted);
                     shellSort<int>.ShellSorting(&noSorted);
+
                     for (int i = 0; i < noSorted.GetSize(); i++) {
                         std::cout<<noSorted.GetValue(i)<<" ";
                     }
