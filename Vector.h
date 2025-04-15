@@ -89,9 +89,9 @@ size_t Vector<T>::GetSize() const {   //Simple getter for size
 
 template<typename T>
 T Vector<T>::FillRandom(const int size) {   //It fills randomly the border with random values
-    std::random_device rd;
+    std::random_device rd;    
     std::mt19937 gen(rd());
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; i++) { //To gowno zamienic zeby nie bylo ifow tylko zeby to gowno mialo osobne funkcje japidi
         if (std::is_same_v<T, int>) {
             std::uniform_int_distribution<> dis(std::numeric_limits<int>::denorm_min(), std::numeric_limits<int>::max());
             Add(dis(gen));
