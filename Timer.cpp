@@ -3,28 +3,25 @@
 //
 
 #include "Timer.h"
-
-#include <iostream>
-#include <ostream>
-#include <thread>
-time_t startTime, stopTime, timeResult;
+#include <chrono>
+std::chrono::milliseconds startTime, stopTime, timeResult;
 void Timer::reset() {
-    timeResult = 0.0;
+    startTime = stopTime = timeResult = std::chrono::milliseconds(0);
 }
 Timer::Timer() {
     reset();
 }
 
 int Timer::start() {
-    time (&startTime);
+    startTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
     return 1;
 }
 int Timer::stop() {
-    time (&stopTime);
+    stopTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
     timeResult = stopTime-startTime;
-    return 0;
+    return 1;
 }
-time_t Timer::result() {
-    return timeResult;
+int Timer::result() {
+    return static_cast<int>(timeResult.count());
 }
 

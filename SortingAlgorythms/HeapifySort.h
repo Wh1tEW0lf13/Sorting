@@ -14,49 +14,36 @@ private:
 };
 
 template<typename T>
+void heapify(Vector<T> *border, int n, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < n && border->GetValue(left) > border->GetValue(largest))
+        largest = left;
+
+    if (right < n && border->GetValue(right) > border->GetValue(largest))
+        largest = right;
+
+    if (largest != i) {
+        T temp = border->GetValue(i);
+        border->ChangeValue(i, border->GetValue(largest));
+        border->ChangeValue(largest, temp);
+        heapify(border, n, largest);
+    }
+}
+
+template<typename T>
 void HeapifySort<T>::HeapifySorting(Vector<T> *myBorder) {
-    int size = myBorder->GetSize();
-    Vector<T> noSorted;
-    for (int i = 0; i < size; i++) {
-        noSorted.Add(myBorder->GetValue(i));
+    int n = myBorder->GetSize();
+
+    for (int i = n / 2 - 1; i >= 0; i--) {
+        heapify(myBorder, n, i);
     }
-    int n = size;
-    while (n > 2) {
-        for (int i = 1; i<n; i++) {
-            int son = i; int parent = son / 2;
-            int value = noSorted.GetValue(i);
-            while ((parent > 0) && (value > noSorted.GetValue(parent))) {
-                noSorted.ChangeValue(son,noSorted.GetValue(parent));
-                son = parent; parent = son/2;
-            }
-            noSorted.ChangeValue(son,value);
-            if (noSorted.GetValue(1)>noSorted.GetValue(2)) {
-                if (noSorted.GetValue(0)<noSorted.GetValue(1)) {
-                    T temp = noSorted.GetValue(0);
-                    noSorted.ChangeValue(0, noSorted.GetValue(1));
-                    noSorted.ChangeValue(1, temp);
-                }
-            }
-            else
-                if (noSorted.GetValue(0)<noSorted.GetValue(2)) {
-                    T temp = noSorted.GetValue(0);
-                    noSorted.ChangeValue(0, noSorted.GetValue(2));
-                    noSorted.ChangeValue(2, temp);
-                }
-        }
-        --n;
-        T temp = noSorted.GetValue(0);
-        noSorted.ChangeValue(0, noSorted.GetValue(n));
-        noSorted.ChangeValue(n, temp);
-        myBorder -> ChangeValue(n, noSorted.GetValue(n));
-        noSorted.Remove(n);
-    }
-    if (noSorted.GetValue(0)>noSorted.GetValue(1)) {
-        noSorted.ChangeValue(0, noSorted.GetValue(1));
-        myBorder -> ChangeValue(1, noSorted.GetValue(0));
-    }
-    else {
-        myBorder -> ChangeValue(0, noSorted.GetValue(0));
-        myBorder -> ChangeValue(1, noSorted.GetValue(1));
+    for (int i = n - 1; i > 0; i--) {
+        T temp = myBorder->GetValue(i);
+        myBorder->ChangeValue(i, myBorder->GetValue(0));
+        myBorder->ChangeValue(0, temp);
+        heapify(myBorder, i, 0);
     }
 }

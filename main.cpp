@@ -10,36 +10,37 @@
 
 void Error() {
     std::cout<<"Arguments are wrong"<<std::endl;
+    exit(-2138);
+}
+template<class T>
+void IfSorted(Vector<T> *border) {  //Checking is a border sorted
+    bool isSorted = true;
+    for (int i = 0; i < border->GetSize()-1; i++) {
+        if (border->GetValue(i) > border->GetValue(i+1)) {
+            isSorted = false;
+            std::cout << "No sorted" << std::endl;
+            break;
+        }
+    }
+    if (isSorted) {
+        std::cout<<"Sorted"<<std::endl;
+    }
 }
 
-void Helper() {
+void Helper() {     //Explain how to start a program
     std::cout<<"If you want to do single test using file, type:"<<std::endl;
     std::cout<<"./YourProject --file <algorithm> <type> <inputFile> [outputFile]"<<std::endl<<std::endl;
-    std::cout<<"<algorithm> Sorting algorithm to use (...)."<<std::endl;
-    std::cout<<"<type> Data type to load (...)."<<std::endl;
+    std::cout<<"<algorithm> Sorting algorithm to use (0: InsertionSort, 1: QuickSort, 2: HeapifySort, 3: ShellSort)."<<std::endl;
+    std::cout<<"<type> Data type to load (0: int, 1: float, 2: double, 3: char)."<<std::endl;
     std::cout<<"<inputFile> File containing the data to be sorted."<<std::endl;
     std::cout<<"[outputFile] File where sorted file should be saved."<<std::endl<<std::endl;
     std::cout<<"If you want to do multiply tests using random types of data, type:"<<std::endl;
     std::cout<<"./YourProject --test <algorithm> <type> <size> <outputFile>"<<std::endl<<std::endl;
-    std::cout<<"<algorithm> Sorting algorithm to use (...)."<<std::endl;
-    std::cout<<"<type> Data type to load (...)."<<std::endl;
+    std::cout<<"<algorithm> Sorting algorithm to use (0: InsertionSort, 1: QuickSort, 2: HeapifySort, 3: ShellSort)."<<std::endl;
+    std::cout<<"<type> Data type to load (0: int, 1: float, 2: double, 3: char)."<<std::endl;
     std::cout<<"<size> Number of elements to generate (instance size)."<<std::endl;
     std::cout<<"<outputFile> File where the benchmark results should be saved."<<std::endl<<std::endl;
-    std::cout<<"If you want to exit, type:"<<std::endl;
-    std::cout<<"--quit"<<std::endl;
 }
-
-template<class T>
-Vector<T> *ValuesSaver(std::fstream file) {
-    auto *notSorted = new Vector<T>();
-    std::string line;
-    while (!file.eof()) {
-        getline(file,line);
-        notSorted->Add(std::stoi(line));
-    }
-    return notSorted;
-}
-
 template<class T>
 Vector<T> FileReader(const std::string& path) {  //Reading values from file
     std::fstream file;
@@ -52,119 +53,191 @@ Vector<T> FileReader(const std::string& path) {  //Reading values from file
     std::string numberOfElementsString;
     getline(file,numberOfElementsString);
     int numberOfElements = std::stoi(numberOfElementsString);
-    Vector<T> notSorted = *ValuesSaver<T>(std::move(file)); //Saving
+    Vector<T> notSorted;
+    for (int i = 0; i < numberOfElements; i++) {
+        getline(file,numberOfElementsString);
+        notSorted.Add(std::stoi(numberOfElementsString));
+    }
     file.close();
     return notSorted;
+}
+
+template<class T>
+void SaveToFile(Vector<T> *border, std::string path) {  //Here I save sorted elements to a txt
+    std::ofstream file(path);
+    file<<border->GetSize()<<std::endl;
+    for (int i = 0; i < border->GetSize(); i++) {
+        file<<border->GetValue(i)<<std::endl;
+    }
+    file.close();
+}
+void SaveTimeToFile(int time) { //Here I save time (ms) to a txt
+    std::fstream file;
+    file.open("C:\\Users\\Wh1tEW0lf13\\Desktop\\Studia\\ProjectMrozo1\\timer.txt", std::ios::out | std::ios::app);
+    file<<time<<std::endl;
+    file.close();
 }
 template<class T>
 void DrunkStudent(Vector<T> *border, float drinkParameter) {
     int pos = 0;
     if (drinkParameter != 0) {
+        if (drinkParameter > 4.0) {
+            std::cout<<"Student is DEAD [*]";
+            exit(13);
+        }
         drinkParameter *= 10;
     }
     else
         drinkParameter = 1;
-    for (int i = 13*drinkParameter; i < border->size(); i+=13*drinkParameter) {
-        T temp = border->getValue(i);
-        border->ChangeValue(i, border->getValue(pos));
+    for (int i = 13*drinkParameter; i < border->GetSize(); i+=13*drinkParameter) {
+        T temp = border->GetValue(i);
+        border->ChangeValue(i, border->GetValue(pos));
         border->ChangeValue(pos, temp);
         pos++;
     }
 }
-template <typename T>
-InsertionSort<T> insertionSort;
-template <typename T>
-QuickSort<T> quickSort;
-template <typename T>
-HeapifySort<T> heapifySort;
-template <typename T>
-ShellSort<T> shellSort;
-int main(const int argc, char* argv[0]) {
-    const std::string firstArg = argv[1];
-    const int algorithmType = std::stoi(argv[2]);
-    const int dataType = std::stoi(argv[3]);
-    const std::string inputFileOrSize = argv[4];
-    const std::string outputFile = argv[5];
 
-    while (true) {
-        if (firstArg == "--file") {
-            switch (dataType) {
-                case 0: {
-                    const Vector<int> noSorted = FileReader<int>(inputFileOrSize);
-                    break;
-                }
-                case 1: {
-                    const Vector<float> noSorted = FileReader<float>(inputFileOrSize);
-                }
-                case 2: {
-                    const Vector<double> noSorted = FileReader<double>(inputFileOrSize);
-                }
-                case 3: {
-                    const Vector<char> noSorted = FileReader<char>(inputFileOrSize);
-                }
-                default: {
-                    Error();
-                    continue;
-                }
-            }
+template<class T>
+void SortType(Vector<T> *border, int algorithmType) {   //Here I check which type of algorythm is used
+    Timer *timer = new Timer();
+    float drinkParameter = 1.0;
+    switch (algorithmType) {
+        case 0: {
+            InsertionSort<T> insertionSort;
+            timer->start();
+            insertionSort.InsertionSorting(border);
+            timer->stop();
+            SaveTimeToFile(timer->result());
             break;
         }
-        else if (firstArg == "--test") {
-            switch (dataType) {
-                case 0: {
-                    Vector<int> noSorted;
-                    noSorted.FillRandom(stoi(inputFileOrSize));
-                    //insertionSort<int>.InsertionSorting(&noSorted);
-                    for (int i = 0; i<noSorted.GetSize(); i++) {
-                        std::cout<<noSorted.GetValue(i)<<" ";
-                    }
-                    std::cout<<std::endl;
-                    //heapifySort<int>.HeapifySorting(&noSorted);
-                    shellSort<int>.ShellSorting(&noSorted);
-
-                    for (int i = 0; i < noSorted.GetSize(); i++) {
-                        std::cout<<noSorted.GetValue(i)<<" ";
-                    }
-                    break;
-                }
-                case 1: {
-                    Vector<float> noSorted;
-                    noSorted.FillRandom(stoi(inputFileOrSize));
-                    insertionSort<float>.InsertionSorting(&noSorted);
-                    break;
-                }
-                case 2: {
-                    Vector<double> noSorted;
-                    noSorted.FillRandom(stoi(inputFileOrSize));
-
-                    insertionSort<double>.InsertionSorting(&noSorted);
-                    break;
-                }
-                case 3: {
-                    Vector<char> noSorted;
-                    noSorted.FillRandom(stoi(inputFileOrSize));
-                    for (int i = 0; i<5; i++) {
-                        std::cout<<noSorted.GetValue(i)<<" ";
-                    }
-                    insertionSort<char>.InsertionSorting(&noSorted);
-                    break;
-                }
-                default: {
-                    Error();
-                    break;
-                }
-            }
+        case 1: {
+            QuickSort<T> quickSort;
+            timer->start();
+            quickSort.QuickSorting(border);
+            timer->stop();
+            SaveTimeToFile(timer->result());
             break;
+        }
+        case 2: {
+            HeapifySort<T> heapifySort;
+            timer->start();
+            heapifySort.HeapifySorting(border);
+            timer->stop();
+            SaveTimeToFile(timer->result());
+            break;
+        }
+        case 3: {
+            ShellSort<T> shellSort;
+            timer->start();
+            shellSort.ShellSorting(border);
+            timer->stop();
+            SaveTimeToFile(timer->result());
+            break;
+        }
+        case 4: {
+            InsertionSort<T> insertionSort;
+            DrunkStudent(border, drinkParameter);
+            timer->start();
+            insertionSort.InsertionSorting(border);
+            timer->stop();
+            SaveTimeToFile(timer->result());
+            break;
+        }
+        default:
+            Error();
+    }
+}
+int main(int argc, char* argv[]) {
+    const std::string firstArg = argv[1];
+
+    //std::fstream file("C:\\Users\\Wh1tEW0lf13\\Desktop\\Studia\\ProjectMrozo1\\timer.txt");
+        if (firstArg == "--file") {
+            const int algorithmType = std::stoi(argv[2]);
+            const int dataType = std::stoi(argv[3]);
+            const std::string inputFileOrSize = argv[4];
+            const std::string outputFile = argv[5];
+                switch (dataType) {
+                    case 0: {
+                        Vector<int> noSorted = FileReader<int>(inputFileOrSize);
+                        SortType(&noSorted, algorithmType);
+                        IfSorted(&noSorted);
+                        SaveToFile(&noSorted, outputFile);
+                        break;
+                    }
+                    case 1: {
+                        Vector<float> noSorted = FileReader<float>(inputFileOrSize);
+                        SortType(&noSorted, algorithmType);
+                        IfSorted(&noSorted);
+                        SaveToFile(&noSorted, outputFile);
+                        break;
+                    }
+                    case 2: {
+                        Vector<double> noSorted = FileReader<double>(inputFileOrSize);
+                        SortType(&noSorted, algorithmType);
+                        IfSorted(&noSorted);
+                        SaveToFile(&noSorted, outputFile);
+                        break;
+                    }
+                    case 3: {
+                        Vector<char> noSorted = FileReader<char>(inputFileOrSize);
+                        SortType(&noSorted, algorithmType);
+                        IfSorted(&noSorted);
+                        SaveToFile(&noSorted, outputFile);
+                        break;
+                    }
+                    default: {
+                        Error();
+                    }
+                }
+        }
+        else if (firstArg == "--test") {
+            const int algorithmType = std::stoi(argv[2]);
+            const int dataType = std::stoi(argv[3]);
+            const std::string inputFileOrSize = argv[4];
+            const std::string outputFile = argv[5];
+                switch (dataType) {
+                        case 0: {
+                            Vector<int> noSorted;
+                            noSorted.FillRandom(stoi(inputFileOrSize)); //Fill a border with random values
+                            //DrunkStudent(&noSorted, 2.0); //When needed it is out of comment
+                            SortType(&noSorted, algorithmType);
+                            IfSorted(&noSorted);
+                            SaveToFile(&noSorted, outputFile);
+                            break;
+                        }
+                        case 1: {
+                            Vector<float> noSorted;
+                            noSorted.FillRandom(stoi(inputFileOrSize));
+                            SortType(&noSorted, algorithmType);
+                            IfSorted(&noSorted);
+                            SaveToFile(&noSorted, outputFile);
+                            break;
+                        }
+                        case 2: {
+                            Vector<double> noSorted;
+                            noSorted.FillRandom(stoi(inputFileOrSize));
+                            SortType(&noSorted, algorithmType);
+                            IfSorted(&noSorted);
+                            SaveToFile(&noSorted, outputFile);
+                            break;
+                        }
+                        case 3: {
+                            Vector<char> noSorted;
+                            noSorted.FillRandom(stoi(inputFileOrSize));
+                            SortType(&noSorted, algorithmType);
+                            IfSorted(&noSorted);
+                            SaveToFile(&noSorted, outputFile);
+                            break;
+                        }
+                        default: {
+                            Error();
+                            break;
+                        }
+                    }
         }
         else if (firstArg == "--help") {
             Helper();
         }
-        else if (firstArg == "--quit") {
-            std::cout<<"Exiting..."<<std::endl;
-            break;
-        }
-    }
-
     return 0;
 }
 

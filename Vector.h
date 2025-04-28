@@ -19,7 +19,7 @@ public:
     Vector();
     ~Vector();
     void Add(const T& value);
-    [[nodiscard]] size_t GetSize() const;
+    size_t GetSize() const;
 
     T FillRandom(int size);
 
@@ -40,6 +40,12 @@ Vector<T>::Vector() {
 template<typename T>
 Vector<T>::~Vector() {
     delete[] border;    //Destroy border
+}
+template<>
+void Vector<int>::Add(const int &value) {
+    Resize();
+    border[this->newPosition] = value;
+    ++this->newPosition;
 }
 
 template<typename T>
@@ -87,31 +93,25 @@ size_t Vector<T>::GetSize() const {   //Simple getter for size
     return size;
 }
 
-template<typename T>
-T Vector<T>::FillRandom(const int size) {   //It fills randomly the border with random values
+template<>
+int Vector<int>::FillRandom(const int size) {
     std::random_device rd;
     std::mt19937 gen(rd());
     for (int i = 0; i < size; i++) {
-        if (std::is_same_v<T, int>) {
-            std::uniform_int_distribution<> dis(std::numeric_limits<int>::denorm_min(), std::numeric_limits<int>::max());
-            Add(dis(gen));
-        }
-        else if (std::is_same_v<T, float>) {
-            std::uniform_real_distribution<> dis(std::numeric_limits<float>::denorm_min(), std::numeric_limits<float>::max());
-            Add(dis(gen));
-        }
-        else if (std::is_same_v<T, double>) {
-            std::uniform_real_distribution<> dis(std::numeric_limits<double>::denorm_min(), std::numeric_limits<double>::max());
-            Add(dis(gen));
-        }
-        else if (std::is_same_v<T, char>) {
-            std::uniform_real_distribution<> dis(std::numeric_limits<char>::denorm_min(), std::numeric_limits<char>::max());
-            Add(dis(gen));
-        }
-        else
-            std::cout<<"Bad type";
+        std::uniform_int_distribution<> dis(std::numeric_limits<int>::denorm_min(), std::numeric_limits<int>::max());
+        Add(dis(gen));
     }
+    return 0;
+}
 
+template<typename T>
+T Vector<T>::FillRandom(int size) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    for (int i = 0; i < size; i++) {
+            std::uniform_real_distribution<> dis(std::numeric_limits<T>::denorm_min(), std::numeric_limits<T>::max());
+            Add(dis(gen));
+    }
     return 0;
 }
 template<typename T>

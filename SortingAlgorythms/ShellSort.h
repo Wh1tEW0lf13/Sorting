@@ -19,21 +19,15 @@ class ShellSort {
 
 template<typename T>
 void ShellSort<T>::ShellSorting(Vector<T> *border) {
-    int k = floor(sqrt(border->GetSize()));
-    while (k > 0) {
-        int interspace = pow(2, k) - 1;
-        for (int i = 0; i < interspace; i++) {
-            for (int o = i+interspace; o < border->GetSize(); o+=interspace) {
-                for (int j = i+interspace; j < border->GetSize(); j+=interspace) {
-                    if (border->GetValue(j)<border->GetValue(j-interspace)) {
-                        T temp = border->GetValue(j);
-                        border->ChangeValue(j, border->GetValue(j-interspace));
-                        border->ChangeValue(j-interspace, temp);
-                    }
-                }
+    int size = border->GetSize();
+    for (int interspace = size/2; interspace > 0; interspace/=2) {
+        for (int i = interspace; i < size; i++) {
+            T temp = border->GetValue(i);
+            int j;
+            for (j = i; j >= interspace && temp < border->GetValue(j - interspace); j-= interspace) {
+                border->ChangeValue(j, border->GetValue(j - interspace));
             }
-
+            border->ChangeValue(j, temp);
         }
-        --k;
     }
 }

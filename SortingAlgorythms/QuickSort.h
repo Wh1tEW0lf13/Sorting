@@ -15,7 +15,8 @@ private:
 
     template<typename T>
     void QuickSort<T>::Split(Vector<T> *border, int left, int right) {
-        int pivot = (left+right)/2;
+        srand(time(NULL));
+        int pivot = (left + right)/2;
         int j;
         T pivotValue = border->GetValue(pivot);
         T temp = border->GetValue(right);

@@ -12,10 +12,10 @@ class Timer {
 public:
     Timer(); // Initialize and prepare to start.
 
-    static void reset(); // Reset timer.
-    static int start(); // Start timer.
-    static int stop(); // Stop timer.
-    static time_t result(); // Return elapsed time [ms].
+    void reset(); // Reset timer.
+    int start(); // Start timer.
+    int stop(); // Stop timer.
+    int result(); // Return elapsed time [ms].
 };
 
 
