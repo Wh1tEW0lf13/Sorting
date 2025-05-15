@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <ctime>
+#include <cstdlib>
 #include "Vector.h"
 #include "Timer.h"
 #include "SortingAlgorythms/HeapifySort.h"
@@ -165,6 +167,33 @@ void SortType(Vector<T> *border, int algorithmType) {   //Here I check which typ
             Error();
     }
 }
+
+
+Vector<int> &GraphCreator(int size, int density, int maxWeight) {
+    Vector<int> graph[size];
+    srand(time(NULL));
+    for (int i = 0; i < size-1; i++) {
+        int value = std::rand() % maxWeight;
+        int randomVertex = rand() % (size-1-i) + i+1;
+        for (int j = 0; j < size; j++) {
+            if (j == randomVertex || j == i) {
+                std::cout<<j<<" ";
+                graph[j].Add(value);
+            }
+            else {
+                graph[j].Add(0);
+            }
+        }
+        std::cout<<std::endl;
+    }
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size-1; j++) {
+            std::cout<<graph[i].GetValue(j)<<" ";
+        }
+        std::cout<<std::endl;
+    }
+    return *graph;
+}
 int main(int argc, char* argv[]) {
     std::string whichProgram;
     if (argc > 1)
@@ -257,6 +286,7 @@ int main(int argc, char* argv[]) {
         }
     }
     else if (whichProgram == "1") {
+        const int maxWeight = 100;
         const std::string firstArg = argv[2];
         const int problem = std::stoi(argv[3]);
         const std::string algorythmType = argv[4];
@@ -270,6 +300,9 @@ int main(int argc, char* argv[]) {
             const int density = std::stoi(argv[6]);
             const int count = std::stoi(argv[7]);
             const std::string outputFile = argv[8];
+            if (problem == 0) {
+                GraphCreator(size, density, maxWeight);
+            }
         }
     }
     else if (whichProgram == "--help1") {
