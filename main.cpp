@@ -26,18 +26,35 @@ void IfSorted(Vector<T> *border) {  //Checking is a border sorted
         std::cout<<"Sorted"<<std::endl;
     }
 }
-
-void Helper() {     //Explain how to start a program
+void SortingHelper()
+    {     //Explain how to start a program
+        std::cout<<"If you want to do single test using file, type:"<<std::endl;
+        std::cout<<"./YourProject 0 --file <algorithm> <type> <inputFile> [outputFile]"<<std::endl<<std::endl;
+        std::cout<<"<algorithm> Sorting algorithm to use (0: InsertionSort, 1: QuickSort, 2: HeapifySort, 3: ShellSort)."<<std::endl;
+        std::cout<<"<type> Data type to load (0: int, 1: float, 2: double, 3: char)."<<std::endl;
+        std::cout<<"<inputFile> File containing the data to be sorted."<<std::endl;
+        std::cout<<"[outputFile] File where sorted file should be saved."<<std::endl<<std::endl;
+        std::cout<<"If you want to do multiply tests using random types of data, type:"<<std::endl;
+        std::cout<<"./YourProject --test <algorithm> <type> <size> <outputFile>"<<std::endl<<std::endl;
+        std::cout<<"<algorithm> Sorting algorithm to use (0: InsertionSort, 1: QuickSort, 2: HeapifySort, 3: ShellSort, 4:DrunkStudentSort)."<<std::endl;
+        std::cout<<"<type> Data type to load (0: int, 1: float, 2: double, 3: char)."<<std::endl;
+        std::cout<<"<size> Number of elements to generate (instance size)."<<std::endl;
+        std::cout<<"<outputFile> File where the benchmark results should be saved."<<std::endl<<std::endl;
+    }
+void GraphHelper() {     //Explain how to start a program
     std::cout<<"If you want to do single test using file, type:"<<std::endl;
-    std::cout<<"./YourProject --file <algorithm> <type> <inputFile> [outputFile]"<<std::endl<<std::endl;
-    std::cout<<"<algorithm> Sorting algorithm to use (0: InsertionSort, 1: QuickSort, 2: HeapifySort, 3: ShellSort)."<<std::endl;
-    std::cout<<"<type> Data type to load (0: int, 1: float, 2: double, 3: char)."<<std::endl;
+    std::cout<<"./YourProject 1 --file <problem> <algorithm> <inputFile> [outputFile]"<<std::endl<<std::endl;
+    std::cout<<"<problem> Problem to solve ( 0 - MST, 1 - shortest path )."<<std::endl;
+    std::cout<<"Algorithm for the problem:"<<std::endl;
+    std::cout<<"For MST (e.g. 0 - all, 1 - Prim's, 2 - Kruskal's)"<<std::endl;
+    std::cout<<"For shortest (e.g. 0 - all, 1 - Dijkstra's, 2 - Ford-Bellman's, 3 - Ford-Fulkerson's)"<<std::endl;
     std::cout<<"<inputFile> File containing the data to be sorted."<<std::endl;
     std::cout<<"[outputFile] File where sorted file should be saved."<<std::endl<<std::endl;
     std::cout<<"If you want to do multiply tests using random types of data, type:"<<std::endl;
-    std::cout<<"./YourProject --test <algorithm> <type> <size> <outputFile>"<<std::endl<<std::endl;
-    std::cout<<"<algorithm> Sorting algorithm to use (0: InsertionSort, 1: QuickSort, 2: HeapifySort, 3: ShellSort)."<<std::endl;
-    std::cout<<"<type> Data type to load (0: int, 1: float, 2: double, 3: char)."<<std::endl;
+    std::cout<<"<problem> Problem to solve ( 0 - MST, 1 - shortest path )."<<std::endl;
+    std::cout<<"Algorithm for the problem:"<<std::endl;
+    std::cout<<"For MST (e.g. 0 - all, 1 - Prim's, 2 - Kruskal's)"<<std::endl;
+    std::cout<<"For shortest (e.g. 0 - all, 1 - Dijkstra's, 2 - Ford-Bellman's, 3 - Ford-Fulkerson's)"<<std::endl;
     std::cout<<"<size> Number of elements to generate (instance size)."<<std::endl;
     std::cout<<"<outputFile> File where the benchmark results should be saved."<<std::endl<<std::endl;
 }
@@ -73,7 +90,8 @@ void SaveToFile(Vector<T> *border, std::string path) {  //Here I save sorted ele
 }
 void SaveTimeToFile(int time) { //Here I save time (ms) to a txt
     std::fstream file;
-    file.open("C:\\Users\\Wh1tEW0lf13\\Desktop\\Studia\\ProjectMrozo1\\timer.txt", std::ios::out | std::ios::app);
+    std::string path = "time.txt";
+    file.open(path, std::ios::out | std::ios::app);
     file<<time<<std::endl;
     file.close();
 }
@@ -148,14 +166,16 @@ void SortType(Vector<T> *border, int algorithmType) {   //Here I check which typ
     }
 }
 int main(int argc, char* argv[]) {
-    const std::string firstArg = argv[1];
-
-    //std::fstream file("C:\\Users\\Wh1tEW0lf13\\Desktop\\Studia\\ProjectMrozo1\\timer.txt");
+    std::string whichProgram;
+    if (argc > 1)
+        whichProgram = argv[1];
+    if (whichProgram == "0") {
+        const std::string firstArg = argv[2];
         if (firstArg == "--file") {
-            const int algorithmType = std::stoi(argv[2]);
-            const int dataType = std::stoi(argv[3]);
-            const std::string inputFileOrSize = argv[4];
-            const std::string outputFile = argv[5];
+            const int algorithmType = std::stoi(argv[3]);
+            const int dataType = std::stoi(argv[4]);
+            const std::string inputFileOrSize = argv[5];
+            const std::string outputFile = argv[6];
                 switch (dataType) {
                     case 0: {
                         Vector<int> noSorted = FileReader<int>(inputFileOrSize);
@@ -191,53 +211,76 @@ int main(int argc, char* argv[]) {
                 }
         }
         else if (firstArg == "--test") {
-            const int algorithmType = std::stoi(argv[2]);
-            const int dataType = std::stoi(argv[3]);
-            const std::string inputFileOrSize = argv[4];
-            const std::string outputFile = argv[5];
-                switch (dataType) {
-                        case 0: {
-                            Vector<int> noSorted;
-                            noSorted.FillRandom(stoi(inputFileOrSize)); //Fill a border with random values
-                            //DrunkStudent(&noSorted, 2.0); //When needed it is out of comment
-                            SortType(&noSorted, algorithmType);
-                            IfSorted(&noSorted);
-                            SaveToFile(&noSorted, outputFile);
-                            break;
-                        }
-                        case 1: {
-                            Vector<float> noSorted;
-                            noSorted.FillRandom(stoi(inputFileOrSize));
-                            SortType(&noSorted, algorithmType);
-                            IfSorted(&noSorted);
-                            SaveToFile(&noSorted, outputFile);
-                            break;
-                        }
-                        case 2: {
-                            Vector<double> noSorted;
-                            noSorted.FillRandom(stoi(inputFileOrSize));
-                            SortType(&noSorted, algorithmType);
-                            IfSorted(&noSorted);
-                            SaveToFile(&noSorted, outputFile);
-                            break;
-                        }
-                        case 3: {
-                            Vector<char> noSorted;
-                            noSorted.FillRandom(stoi(inputFileOrSize));
-                            SortType(&noSorted, algorithmType);
-                            IfSorted(&noSorted);
-                            SaveToFile(&noSorted, outputFile);
-                            break;
-                        }
-                        default: {
-                            Error();
-                            break;
-                        }
-                    }
+            const int algorithmType = std::stoi(argv[3]);
+            const int dataType = std::stoi(argv[4]);
+            const std::string inputFileOrSize = argv[5];
+            const std::string outputFile = argv[6];
+            switch (dataType) {
+                case 0: {
+                    Vector<int> noSorted;
+                    noSorted.FillRandom(stoi(inputFileOrSize)); //Fill a border with random values
+                    //DrunkStudent(&noSorted, 2.0); //When needed it is out of comment
+                    SortType(&noSorted, algorithmType);
+                    IfSorted(&noSorted);
+                    SaveToFile(&noSorted, outputFile);
+                    break;
+                }
+                case 1: {
+                    Vector<float> noSorted;
+                    noSorted.FillRandom(stoi(inputFileOrSize));
+                    SortType(&noSorted, algorithmType);
+                    IfSorted(&noSorted);
+                    SaveToFile(&noSorted, outputFile);
+                    break;
+                }
+                case 2: {
+                    Vector<double> noSorted;
+                    noSorted.FillRandom(stoi(inputFileOrSize));
+                    SortType(&noSorted, algorithmType);
+                    IfSorted(&noSorted);
+                    SaveToFile(&noSorted, outputFile);
+                    break;
+                }
+                case 3: {
+                    Vector<char> noSorted;
+                    noSorted.FillRandom(stoi(inputFileOrSize));
+                    SortType(&noSorted, algorithmType);
+                    IfSorted(&noSorted);
+                    SaveToFile(&noSorted, outputFile);
+                    break;
+                }
+                default: {
+                    Error();
+                    break;
+                }
+            }
         }
-        else if (firstArg == "--help") {
-            Helper();
+    }
+    else if (whichProgram == "1") {
+        const std::string firstArg = argv[2];
+        const int problem = std::stoi(argv[3]);
+        const std::string algorythmType = argv[4];
+        Vector<Vector<int>> incidentMatrix;
+        if (firstArg == "--file") {
+            const std::string inputFile = argv[5];
+            const std::string outputFile = argv[6];
         }
+        else if (firstArg == "--test") {
+            const int size = std::stoi(argv[5]);
+            const int density = std::stoi(argv[6]);
+            const int count = std::stoi(argv[7]);
+            const std::string outputFile = argv[8];
+        }
+    }
+    else if (whichProgram == "--help1") {
+        SortingHelper();
+    }
+    else if (whichProgram == "--help2") {
+        GraphHelper();
+    }
+    else {
+        std::cout<<"Type --help1 if you want sorting helper, or --help2 if you want graph helper.";
+    }
     return 0;
 }
 
