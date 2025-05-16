@@ -3,6 +3,8 @@
 #include <string>
 #include <ctime>
 #include <cstdlib>
+#include <bits/locale_facets_nonio.h>
+
 #include "Vector.h"
 #include "Timer.h"
 #include "SortingAlgorythms/HeapifySort.h"
@@ -168,31 +170,56 @@ void SortType(Vector<T> *border, int algorithmType) {   //Here I check which typ
     }
 }
 
+bool CheckIfCycle(int a, int b, Vector<int> *graph) {
+    for (int i = 0; i < graph[0].GetSize(); i++) {
+        if (graph[a].GetValue(i) != 0 && graph[b].GetValue(i) != 0) {
+            return false;
+        }
+    }
+    return true;
+}
 
-Vector<int> &GraphCreator(int size, int density, int maxWeight) {
-    Vector<int> graph[size];
+void FillGraph(Vector<int> *graph ,int size, int firstVertex, int secondVertex, int maxWeight) {
+    int value = std::rand() % maxWeight;
+    for (int j = 0; j < size; j++) {
+        if (j == firstVertex || j == secondVertex) {
+            graph[j].Add(value);
+        }
+        else {
+            graph[j].Add(0);
+        }
+    }
+}
+
+void GraphCreator(Vector<int> *graph ,int size, int density, int maxWeight) {
+    int graphDensity = 0;
     srand(time(NULL));
-    for (int i = 0; i < size-1; i++) {
-        int value = std::rand() % maxWeight;
+    for (int i = 0; i < size-1; i++) {  //Creating simple consistent graph
         int randomVertex = rand() % (size-1-i) + i+1;
-        for (int j = 0; j < size; j++) {
-            if (j == randomVertex || j == i) {
-                std::cout<<j<<" ";
-                graph[j].Add(value);
-            }
-            else {
-                graph[j].Add(0);
+        FillGraph(graph,size,i,randomVertex,maxWeight);
+        graphDensity++;
+    }
+    if (density <= 100 && density > 0) {
+        std::cout << (size*(size-1)/2)*(density/100.0) << std::endl;
+        while((size*(size-1)/2)*(density/100.0)>graphDensity) {
+            int firstRandomVertex = rand() % size;
+            int secondRandomVertex = rand() % size;
+            if (firstRandomVertex != secondRandomVertex&&CheckIfCycle(firstRandomVertex,secondRandomVertex, graph)) {
+                FillGraph(graph,size,firstRandomVertex,secondRandomVertex,maxWeight);
+                graphDensity++;
+                std::cout<<graphDensity<<std::endl;
             }
         }
-        std::cout<<std::endl;
+    }
+    else{
+        std::cout<<"Density is wrong!!!"<<std::endl;
     }
     for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size-1; j++) {
+        for (int j = 0; j < graph[0].GetSize(); j++) {
             std::cout<<graph[i].GetValue(j)<<" ";
         }
         std::cout<<std::endl;
     }
-    return *graph;
 }
 int main(int argc, char* argv[]) {
     std::string whichProgram;
@@ -290,7 +317,6 @@ int main(int argc, char* argv[]) {
         const std::string firstArg = argv[2];
         const int problem = std::stoi(argv[3]);
         const std::string algorythmType = argv[4];
-        Vector<Vector<int>> incidentMatrix;
         if (firstArg == "--file") {
             const std::string inputFile = argv[5];
             const std::string outputFile = argv[6];
@@ -300,8 +326,10 @@ int main(int argc, char* argv[]) {
             const int density = std::stoi(argv[6]);
             const int count = std::stoi(argv[7]);
             const std::string outputFile = argv[8];
+            Vector<int> matrix[size];
             if (problem == 0) {
-                GraphCreator(size, density, maxWeight);
+                GraphCreator(matrix,size, density, maxWeight);
+
             }
         }
     }
