@@ -11,4 +11,6 @@ add_executable(ProjectMrozo1 main.cpp
         SortingAlgorythms/QuickSort.h
         SortingAlgorythms/HeapifySort.h
         SortingAlgorythms/ShellSort.h
+        GraphsAlgorythms/Vertex.cpp
+        GraphsAlgorythms/Vertex.h
 )
