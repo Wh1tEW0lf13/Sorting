@@ -179,45 +179,54 @@ bool CheckIfCycle(int a, int b, Vertex *graph) {
     return true;
 }
 
-void FillGraph(Vertex *graph ,int size, int firstVertex, int secondVertex, int maxWeight) {
-    int value = std::rand() % maxWeight;
+int FillGraph(Vertex *graph ,int size, int firstVertex, int secondVertex, int maxWeight, int problem) {
+    int value = std::rand() % (maxWeight-1) + 1;
     for (int j = 0; j < size; j++) {
-        if (j == firstVertex || j == secondVertex) {
-            graph[j].AddEdge(value);
+            if (j == firstVertex) {
+                graph[j].AddEdge(value);
+                graph[j].AddNext(secondVertex,value);
+            }
+            else if (j == secondVertex) {
+                if (problem==0) {
+                    graph[j].AddEdge(value);
+                }
+                else{
+                    graph[j].AddEdge(-value);
+                    graph[j].AddPrev(firstVertex);
+                }
+            }
+            else {
+                graph[j].AddEdge(0);
+            }
         }
-        else {
-            graph[j].AddEdge(0);
-        }
+    return 1;
     }
-}
 
-void GraphCreator(Vertex *graph ,int size, int density, int maxWeight) {
+void GraphCreator(Vertex *graph ,int size, int density, int maxWeight, int problem) {
     int graphDensity = 0;
     srand(time(NULL));
     for (int i = 0; i < size-1; i++) {  //Creating simple consistent graph
         int randomVertex = rand() % (size-1-i) + i+1;
-        FillGraph(graph,size,i,randomVertex,maxWeight);
+        FillGraph(graph,size,i,randomVertex,maxWeight, problem); //Creating incident matrix
         graphDensity++;
     }
-    std::cout<<"ELO";
     if (density <= 100 && density > 0) {
-        std::cout << (size*(size-1)/2)*(density/100.0) << std::endl;
         while((size*(size-1)/2)*(density/100.0)>graphDensity) {
             int firstRandomVertex = rand() % size;
             int secondRandomVertex = rand() % size;
             if (firstRandomVertex != secondRandomVertex&&CheckIfCycle(firstRandomVertex,secondRandomVertex, graph)) {
-                FillGraph(graph,size,firstRandomVertex,secondRandomVertex,maxWeight);
+                FillGraph(graph,size,firstRandomVertex,secondRandomVertex,maxWeight, problem);
                 graphDensity++;
-                std::cout<<graphDensity<<std::endl;
             }
         }
     }
     else{
         std::cout<<"Density is wrong!!!"<<std::endl;
+        exit(-2136);
     }
     for (int i = 0; i < size; i++) {
-        for (int j = 0; j < graph[0].GetEdgeSizes(); j++) {
-            std::cout<<graph[i].GetEdge(j)<<" ";
+        for (int j = 0; j < graph[i].GetEdgeSizes(); j++) {
+            std::cout<<graph[i].GetEdge(j)<<", ";
         }
         std::cout<<std::endl;
     }
@@ -328,7 +337,7 @@ int main(int argc, char* argv[]) {
             const int count = std::stoi(argv[7]);
             const std::string outputFile = argv[8];
             Vertex graph[size];
-            GraphCreator(graph,size, density, maxWeight);
+            GraphCreator(graph,size, density, maxWeight, problem);
         }
     }
     else if (whichProgram == "--help1") {
