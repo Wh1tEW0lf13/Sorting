@@ -3,13 +3,14 @@
 //
 
 #include "Vertex.h"
-
+bool _isInMST;
 Vector<int> _edges;
 Vector<int> _nextVertex;
 Vector<int> _prevVertex;
 Vector<int> _weight;
 
 Vertex::Vertex() {
+    this->_isInMST = false;
     this->_edges;
     this->_nextVertex;
     this-> _prevVertex;
@@ -36,4 +37,18 @@ int Vertex::GetEdge(int n) {
 }
 int Vertex::GetEdgeSizes() {
     return _edges.GetSize();
+}
+void Vertex::InMST() {
+    _isInMST = true;
+}
+bool Vertex::GetInMST() {
+    return _isInMST;
+}
+
+void Vertex::RemoveEdge(int index) {
+    _edges.Remove(index);
+}
+
+void Vertex::ChangeWeight(int index, int weight) {
+    this->_edges.ChangeValue(index, weight);
 }

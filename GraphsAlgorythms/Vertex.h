@@ -16,12 +16,17 @@ class Vertex {
     void AddPrev(int vertex);
     int GetEdge(int n);
     int GetEdgeSizes();
+    void RemoveEdge(int index);
+    void InMST();
+    bool GetInMST();
+    void ChangeWeight(int index, int weight);
 
-    private:
+private:
     Vector<int> _edges;  //It creates in incident matrix
     Vector<int> _nextVertex;
     Vector<int> _prevVertex;
     Vector<int> _weight;
+    bool _isInMST;
 };
 
 

@@ -59,7 +59,7 @@ void Vector<T>::BorderSaver(int *values, int size) {
 }
 template<typename T>
 void Vector<T>::Remove(int index) {
-    size--;
+    --size;
     T* newBorder = new T[size];
     for (int i = 0; i < index; i++) {
         newBorder[i] = border[i];

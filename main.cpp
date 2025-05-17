@@ -6,6 +6,7 @@
 
 #include "Vector.h"
 #include "Timer.h"
+#include "GraphsAlgorythms/MST.h"
 #include "GraphsAlgorythms/Vertex.h"
 #include "SortingAlgorythms/HeapifySort.h"
 #include "SortingAlgorythms/InsertionSort.h"
@@ -224,12 +225,6 @@ void GraphCreator(Vertex *graph ,int size, int density, int maxWeight, int probl
         std::cout<<"Density is wrong!!!"<<std::endl;
         exit(-2136);
     }
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < graph[i].GetEdgeSizes(); j++) {
-            std::cout<<graph[i].GetEdge(j)<<", ";
-        }
-        std::cout<<std::endl;
-    }
 }
 int main(int argc, char* argv[]) {
     std::string whichProgram;
@@ -338,6 +333,13 @@ int main(int argc, char* argv[]) {
             const std::string outputFile = argv[8];
             Vertex graph[size];
             GraphCreator(graph,size, density, maxWeight, problem);
+            for (int i = 0;i < size;++i) {
+                for (int j = 0; j < graph[0].GetEdgeSizes(); ++j) {
+                    std::cout << graph[i].GetEdge(j)<<" ";
+                }
+                std::cout << std::endl;
+            }
+            MST::Prism(size, graph, maxWeight);
         }
     }
     else if (whichProgram == "--help1") {
