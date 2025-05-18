@@ -64,7 +64,7 @@ void GraphHelper() {     //Explain how to start a program
     std::cout<<"<outputFile> File where the benchmark results should be saved."<<std::endl<<std::endl;
 }
 template<class T>
-Vector<T> FileReader(const std::string& path) {  //Reading values from file
+Vector<T> FileReader(std::string path) {  //Reading values from file
     std::fstream file;
     file.open(path, std::ios::in);
     if (!file.is_open()) {
@@ -83,6 +83,7 @@ Vector<T> FileReader(const std::string& path) {  //Reading values from file
     file.close();
     return notSorted;
 }
+
 
 template<class T>
 void SaveToFile(Vector<T> *border, std::string path) {  //Here I save sorted elements to a txt
@@ -180,8 +181,9 @@ bool CheckIfCycle(int a, int b, Vertex *graph) {
     return true;
 }
 
-int FillGraph(Vertex *graph ,int size, int firstVertex, int secondVertex, int maxWeight, int problem) {
-    int value = std::rand() % (maxWeight-1) + 1;
+int FillGraph(Vertex *graph ,int size, int firstVertex, int secondVertex, int maxWeight, int problem, bool isTest, int value) {
+    if (isTest)
+        value = std::rand() % (maxWeight-1) + 1;
     for (int j = 0; j < size; j++) {
             if (j == firstVertex) {
                 graph[j].AddEdge(value);
@@ -208,7 +210,7 @@ void GraphCreator(Vertex *graph ,int size, int density, int maxWeight, int probl
     srand(time(NULL));
     for (int i = 0; i < size-1; i++) {  //Creating simple consistent graph
         int randomVertex = rand() % (size-1-i) + i+1;
-        FillGraph(graph,size,i,randomVertex,maxWeight, problem); //Creating incident matrix
+        FillGraph(graph,size,i,randomVertex,maxWeight, problem, true, 0); //Creating incident matrix
         graphDensity++;
     }
     if (density <= 100 && density > 0) {
@@ -216,7 +218,7 @@ void GraphCreator(Vertex *graph ,int size, int density, int maxWeight, int probl
             int firstRandomVertex = rand() % size;
             int secondRandomVertex = rand() % size;
             if (firstRandomVertex != secondRandomVertex&&CheckIfCycle(firstRandomVertex,secondRandomVertex, graph)) {
-                FillGraph(graph,size,firstRandomVertex,secondRandomVertex,maxWeight, problem);
+                FillGraph(graph,size,firstRandomVertex,secondRandomVertex,maxWeight, problem, true, 0);
                 graphDensity++;
             }
         }
@@ -224,6 +226,32 @@ void GraphCreator(Vertex *graph ,int size, int density, int maxWeight, int probl
     else{
         std::cout<<"Density is wrong!!!"<<std::endl;
         exit(-2136);
+    }
+}
+Vertex* FileReaderGraph(std::string filePath, int maxWeight, int problem) {
+    std::fstream file;
+    file.open(filePath, std::ios::in);
+    std::cout<<"File opened."<<std::endl;
+    std::string numberOfElementsString;
+    getline(file,numberOfElementsString);
+    if (!file.is_open()) {
+        std::cout<<"File does not exist."<<std::endl;
+        exit(1);
+    }
+    int tab = numberOfElementsString.find('\t');
+    int numberOfVertex = stoi(numberOfElementsString.substr(0, tab-1));
+    Vertex graph[numberOfVertex];
+    int numberOfEdges = stoi(numberOfElementsString.substr(tab+1, numberOfElementsString.length()-1));
+    for (int i = 0; i < numberOfEdges; i++) {
+        getline(file,numberOfElementsString);
+        tab = numberOfElementsString.find('\t');
+        int firstVertex = stoi(numberOfElementsString.substr(0, tab-1));
+        numberOfElementsString.erase(0, tab);
+        tab = numberOfElementsString.find('\t');
+        int secondVertex = numberOfElementsString.find('\t');
+        numberOfElementsString.erase(0, tab);
+        int weight = stoi(numberOfElementsString.substr(0, numberOfElementsString.length()-1));
+        FillGraph(graph,numberOfVertex,firstVertex,secondVertex,maxWeight,problem, false, weight);
     }
 }
 int main(int argc, char* argv[]) {
@@ -325,6 +353,7 @@ int main(int argc, char* argv[]) {
         if (firstArg == "--file") {
             const std::string inputFile = argv[5];
             const std::string outputFile = argv[6];
+            Vertex *graph = FileReaderGraph(inputFile, maxWeight,problem);
         }
         else if (firstArg == "--test") {
             const int size = std::stoi(argv[5]);
