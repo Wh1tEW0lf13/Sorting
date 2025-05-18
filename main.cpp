@@ -228,7 +228,7 @@ void GraphCreator(Vertex *graph ,int size, int density, int maxWeight, int probl
         exit(-2136);
     }
 }
-Vertex* FileReaderGraph(std::string filePath, int maxWeight, int problem) {
+void FileReaderGraph(std::string filePath, int maxWeight, int problem) {
     std::fstream file;
     file.open(filePath, std::ios::in);
     std::cout<<"File opened."<<std::endl;
@@ -239,20 +239,27 @@ Vertex* FileReaderGraph(std::string filePath, int maxWeight, int problem) {
         exit(1);
     }
     int tab = numberOfElementsString.find('\t');
-    int numberOfVertex = stoi(numberOfElementsString.substr(0, tab-1));
+    int numberOfEdges = stoi(numberOfElementsString.substr(0, tab));
+    int numberOfVertex = stoi(numberOfElementsString.substr(tab+1, numberOfElementsString.length()-1));
     Vertex graph[numberOfVertex];
-    int numberOfEdges = stoi(numberOfElementsString.substr(tab+1, numberOfElementsString.length()-1));
     for (int i = 0; i < numberOfEdges; i++) {
         getline(file,numberOfElementsString);
         tab = numberOfElementsString.find('\t');
-        int firstVertex = stoi(numberOfElementsString.substr(0, tab-1));
-        numberOfElementsString.erase(0, tab);
+        int firstVertex = stoi(numberOfElementsString.substr(0, tab));
+        numberOfElementsString.erase(0, tab+1);
         tab = numberOfElementsString.find('\t');
-        int secondVertex = numberOfElementsString.find('\t');
-        numberOfElementsString.erase(0, tab);
-        int weight = stoi(numberOfElementsString.substr(0, numberOfElementsString.length()-1));
+        int secondVertex = stoi(numberOfElementsString.substr(0, tab));
+        numberOfElementsString.erase(0, tab+1);
+        int weight = stoi(numberOfElementsString);
         FillGraph(graph,numberOfVertex,firstVertex,secondVertex,maxWeight,problem, false, weight);
     }
+    for (int i = 0;i < numberOfVertex;++i) {
+        for (int j = 0; j < graph[0].GetEdgeSizes(); ++j) {
+            std::cout << graph[i].GetEdge(j)<<" ";
+        }
+        std::cout << std::endl;
+    }
+
 }
 int main(int argc, char* argv[]) {
     std::string whichProgram;
@@ -353,7 +360,7 @@ int main(int argc, char* argv[]) {
         if (firstArg == "--file") {
             const std::string inputFile = argv[5];
             const std::string outputFile = argv[6];
-            Vertex *graph = FileReaderGraph(inputFile, maxWeight,problem);
+            FileReaderGraph(inputFile, maxWeight,problem);
         }
         else if (firstArg == "--test") {
             const int size = std::stoi(argv[5]);
