@@ -4,11 +4,9 @@
 #include <iostream>
 #include <limits>
 
-void MST::Prism(int size, Vertex* graph, int maxWeight) {
-    std::cout << std::endl;
-
+Vertex* MST::Prim_matrix(int size, Vertex* graph, int maxWeight) {
     int mstWeight = 0;
-    Vertex mst[size];
+    Vertex* mst = new Vertex[size];
 
     graph[0].InMST();
 
@@ -41,25 +39,22 @@ void MST::Prism(int size, Vertex* graph, int maxWeight) {
 
         mstWeight += minKey;
         graph[u].InMST();
-
-        std::cout<<edgeIndexToRemove<<std::endl;
         for (int h = 0; h < size; h++) {
             if (h == u || h == ver) {
                 mst[h].AddEdge(minKey);
-                std::cout<<h<<std::endl;
                 graph[h].ChangeWeight(edgeIndexToRemove, 0);
             } else {
                 mst[h].AddEdge(0);
             }
         }
-        std::cout << std::endl;
-        for (int i = 0;i < size;++i) {
-            for (int j = 0; j < graph[0].GetEdgeSizes(); ++j) {
-                std::cout << graph[i].GetEdge(j)<<" ";
-            }
-            std::cout << std::endl;
+    }
+    for (int i = 0;i < size;++i) {
+        for (int j = 0; j < mst[0].GetEdgeSizes(); ++j) {
+            std::cout << mst[i].GetEdge(j)<<" ";
         }
+        std::cout << std::endl;
     }
 
-    std::cout << "Całkowita waga MST: " << mstWeight << std::endl;
+    std::cout << "Calkowita waga MST: " << mstWeight << std::endl;
+    return mst;
 }

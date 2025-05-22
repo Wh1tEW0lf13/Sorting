@@ -9,7 +9,7 @@
 
 class MST {
 public:
-    static void Prism(int size, Vertex* graph, int maxWeight);
+    static Vertex* Prim_matrix(int size, Vertex* graph, int maxWeight);
 };
 
 

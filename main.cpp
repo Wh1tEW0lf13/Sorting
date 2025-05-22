@@ -84,6 +84,17 @@ Vector<T> FileReader(std::string path) {  //Reading values from file
     return notSorted;
 }
 
+void SaveGraphToFile(Vertex* graph, std::string path, int size) {
+    std::ofstream file(path);
+    file<<size<<"\t"<<graph[0].GetEdgeSizes()<<std::endl;
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < graph[i].GetEdgeSizes(); j++) {
+            file<<graph[i].GetEdge(j)<<" ";
+        }
+        file<<std::endl;
+    }
+    file.close();
+}
 
 template<class T>
 void SaveToFile(Vector<T> *border, std::string path) {  //Here I save sorted elements to a txt
@@ -94,9 +105,8 @@ void SaveToFile(Vector<T> *border, std::string path) {  //Here I save sorted ele
     }
     file.close();
 }
-void SaveTimeToFile(int time) { //Here I save time (ms) to a txt
+void SaveTimeToFile(int time, std::string path) { //Here I save time (ms) to a txt
     std::fstream file;
-    std::string path = "time.txt";
     file.open(path, std::ios::out | std::ios::app);
     file<<time<<std::endl;
     file.close();
@@ -131,7 +141,7 @@ void SortType(Vector<T> *border, int algorithmType) {   //Here I check which typ
             timer->start();
             insertionSort.InsertionSorting(border);
             timer->stop();
-            SaveTimeToFile(timer->result());
+            SaveTimeToFile(timer->result(),"time.txt");
             break;
         }
         case 1: {
@@ -139,7 +149,7 @@ void SortType(Vector<T> *border, int algorithmType) {   //Here I check which typ
             timer->start();
             quickSort.QuickSorting(border);
             timer->stop();
-            SaveTimeToFile(timer->result());
+            SaveTimeToFile(timer->result(),"time.txt");
             break;
         }
         case 2: {
@@ -147,7 +157,7 @@ void SortType(Vector<T> *border, int algorithmType) {   //Here I check which typ
             timer->start();
             heapifySort.HeapifySorting(border);
             timer->stop();
-            SaveTimeToFile(timer->result());
+            SaveTimeToFile(timer->result(),"time.txt");
             break;
         }
         case 3: {
@@ -155,7 +165,7 @@ void SortType(Vector<T> *border, int algorithmType) {   //Here I check which typ
             timer->start();
             shellSort.ShellSorting(border);
             timer->stop();
-            SaveTimeToFile(timer->result());
+            SaveTimeToFile(timer->result(),"time.txt");
             break;
         }
         case 4: {
@@ -164,7 +174,7 @@ void SortType(Vector<T> *border, int algorithmType) {   //Here I check which typ
             timer->start();
             insertionSort.InsertionSorting(border);
             timer->stop();
-            SaveTimeToFile(timer->result());
+            SaveTimeToFile(timer->result(),"time.txt");
             break;
         }
         default:
@@ -228,7 +238,7 @@ void GraphCreator(Vertex *graph ,int size, int density, int maxWeight, int probl
         exit(-2136);
     }
 }
-void FileReaderGraph(std::string filePath, int maxWeight, int problem) {
+void FileReaderGraph(std::string filePath, int maxWeight, int problem, std::string output) {
     std::fstream file;
     file.open(filePath, std::ios::in);
     std::cout<<"File opened."<<std::endl;
@@ -253,12 +263,9 @@ void FileReaderGraph(std::string filePath, int maxWeight, int problem) {
         int weight = stoi(numberOfElementsString);
         FillGraph(graph,numberOfVertex,firstVertex,secondVertex,maxWeight,problem, false, weight);
     }
-    for (int i = 0;i < numberOfVertex;++i) {
-        for (int j = 0; j < graph[0].GetEdgeSizes(); ++j) {
-            std::cout << graph[i].GetEdge(j)<<" ";
-        }
-        std::cout << std::endl;
-    }
+    Vertex* mst_solution = MST::Prim_matrix(numberOfVertex, graph, maxWeight);
+    std::cout<<mst_solution[0].GetEdgeSizes()<<std::endl;
+    SaveGraphToFile(mst_solution,output,numberOfVertex);
 
 }
 int main(int argc, char* argv[]) {
@@ -360,7 +367,7 @@ int main(int argc, char* argv[]) {
         if (firstArg == "--file") {
             const std::string inputFile = argv[5];
             const std::string outputFile = argv[6];
-            FileReaderGraph(inputFile, maxWeight,problem);
+            FileReaderGraph(inputFile, maxWeight,problem,outputFile);
         }
         else if (firstArg == "--test") {
             const int size = std::stoi(argv[5]);
@@ -369,13 +376,8 @@ int main(int argc, char* argv[]) {
             const std::string outputFile = argv[8];
             Vertex graph[size];
             GraphCreator(graph,size, density, maxWeight, problem);
-            for (int i = 0;i < size;++i) {
-                for (int j = 0; j < graph[0].GetEdgeSizes(); ++j) {
-                    std::cout << graph[i].GetEdge(j)<<" ";
-                }
-                std::cout << std::endl;
-            }
-            MST::Prism(size, graph, maxWeight);
+            MST::Prim_matrix(size, graph, maxWeight);
+
         }
     }
     else if (whichProgram == "--help1") {
