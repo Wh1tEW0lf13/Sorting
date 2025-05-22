@@ -64,7 +64,7 @@ void GraphHelper() {     //Explain how to start a program
     std::cout<<"<outputFile> File where the benchmark results should be saved."<<std::endl<<std::endl;
 }
 template<class T>
-Vector<T> FileReader(std::string path) {  //Reading values from file
+Vector<T> FileReaderBorder(std::string path) {  //Reading values from file
     std::fstream file;
     file.open(path, std::ios::in);
     if (!file.is_open()) {
@@ -97,7 +97,7 @@ void SaveGraphToFile(Vertex* graph, std::string path, int size) {
 }
 
 template<class T>
-void SaveToFile(Vector<T> *border, std::string path) {  //Here I save sorted elements to a txt
+void SaveBorderToFile(Vector<T> *border, std::string path) {  //Here I save sorted elements to a txt
     std::ofstream file(path);
     file<<border->GetSize()<<std::endl;
     for (int i = 0; i < border->GetSize(); i++) {
@@ -182,7 +182,7 @@ void SortType(Vector<T> *border, int algorithmType) {   //Here I check which typ
     }
 }
 
-bool CheckIfCycle(int a, int b, Vertex *graph) {
+static bool CheckIfCycle(int a, int b, Vertex *graph) {
     for (int i = 0; i < graph[0].GetEdgeSizes(); i++) {
         if (graph[a].GetEdge(i) != 0 && graph[b].GetEdge(i) != 0) {
             return false;
@@ -263,7 +263,7 @@ void FileReaderGraph(std::string filePath, int maxWeight, int problem, std::stri
         int weight = stoi(numberOfElementsString);
         FillGraph(graph,numberOfVertex,firstVertex,secondVertex,maxWeight,problem, false, weight);
     }
-    Vertex* mst_solution = MST::Prim_matrix(numberOfVertex, graph, maxWeight);
+    Vertex* mst_solution = MST::Prim(numberOfVertex, graph, maxWeight);
     std::cout<<mst_solution[0].GetEdgeSizes()<<std::endl;
     SaveGraphToFile(mst_solution,output,numberOfVertex);
 
@@ -281,31 +281,31 @@ int main(int argc, char* argv[]) {
             const std::string outputFile = argv[6];
                 switch (dataType) {
                     case 0: {
-                        Vector<int> noSorted = FileReader<int>(inputFileOrSize);
+                        Vector<int> noSorted = FileReaderBorder<int>(inputFileOrSize);
                         SortType(&noSorted, algorithmType);
                         IfSorted(&noSorted);
-                        SaveToFile(&noSorted, outputFile);
+                        SaveBorderToFile(&noSorted, outputFile);
                         break;
                     }
                     case 1: {
-                        Vector<float> noSorted = FileReader<float>(inputFileOrSize);
+                        Vector<float> noSorted = FileReaderBorder<float>(inputFileOrSize);
                         SortType(&noSorted, algorithmType);
                         IfSorted(&noSorted);
-                        SaveToFile(&noSorted, outputFile);
+                        SaveBorderToFile(&noSorted, outputFile);
                         break;
                     }
                     case 2: {
-                        Vector<double> noSorted = FileReader<double>(inputFileOrSize);
+                        Vector<double> noSorted = FileReaderBorder<double>(inputFileOrSize);
                         SortType(&noSorted, algorithmType);
                         IfSorted(&noSorted);
-                        SaveToFile(&noSorted, outputFile);
+                        SaveBorderToFile(&noSorted, outputFile);
                         break;
                     }
                     case 3: {
-                        Vector<char> noSorted = FileReader<char>(inputFileOrSize);
+                        Vector<char> noSorted = FileReaderBorder<char>(inputFileOrSize);
                         SortType(&noSorted, algorithmType);
                         IfSorted(&noSorted);
-                        SaveToFile(&noSorted, outputFile);
+                        SaveBorderToFile(&noSorted, outputFile);
                         break;
                     }
                     default: {
@@ -325,7 +325,7 @@ int main(int argc, char* argv[]) {
                     //DrunkStudent(&noSorted, 2.0); //When needed it is out of comment
                     SortType(&noSorted, algorithmType);
                     IfSorted(&noSorted);
-                    SaveToFile(&noSorted, outputFile);
+                    SaveBorderToFile(&noSorted, outputFile);
                     break;
                 }
                 case 1: {
@@ -333,7 +333,7 @@ int main(int argc, char* argv[]) {
                     noSorted.FillRandom(stoi(inputFileOrSize));
                     SortType(&noSorted, algorithmType);
                     IfSorted(&noSorted);
-                    SaveToFile(&noSorted, outputFile);
+                    SaveBorderToFile(&noSorted, outputFile);
                     break;
                 }
                 case 2: {
@@ -341,7 +341,7 @@ int main(int argc, char* argv[]) {
                     noSorted.FillRandom(stoi(inputFileOrSize));
                     SortType(&noSorted, algorithmType);
                     IfSorted(&noSorted);
-                    SaveToFile(&noSorted, outputFile);
+                    SaveBorderToFile(&noSorted, outputFile);
                     break;
                 }
                 case 3: {
@@ -349,7 +349,7 @@ int main(int argc, char* argv[]) {
                     noSorted.FillRandom(stoi(inputFileOrSize));
                     SortType(&noSorted, algorithmType);
                     IfSorted(&noSorted);
-                    SaveToFile(&noSorted, outputFile);
+                    SaveBorderToFile(&noSorted, outputFile);
                     break;
                 }
                 default: {
@@ -376,7 +376,7 @@ int main(int argc, char* argv[]) {
             const std::string outputFile = argv[8];
             Vertex graph[size];
             GraphCreator(graph,size, density, maxWeight, problem);
-            MST::Prim_matrix(size, graph, maxWeight);
+            MST::Prim(size, graph, maxWeight);
 
         }
     }

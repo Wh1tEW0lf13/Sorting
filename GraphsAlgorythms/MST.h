@@ -9,7 +9,7 @@
 
 class MST {
 public:
-    static Vertex* Prim_matrix(int size, Vertex* graph, int maxWeight);
+    static Vertex* Prim(int size, Vertex* graph, int maxWeight);
 };
 
 

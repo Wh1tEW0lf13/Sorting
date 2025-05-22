@@ -4,7 +4,7 @@
 #include <iostream>
 #include <limits>
 
-Vertex* MST::Prim_matrix(int size, Vertex* graph, int maxWeight) {
+Vertex* MST::Prim(int size, Vertex* graph, int maxWeight) {
     int mstWeight = 0;
     Vertex* mst = new Vertex[size];
 
@@ -36,14 +36,20 @@ Vertex* MST::Prim_matrix(int size, Vertex* graph, int maxWeight) {
                 }
             }
         }
-
         mstWeight += minKey;
         graph[u].InMST();
         for (int h = 0; h < size; h++) {
-            if (h == u || h == ver) {
+            if (h == u) {
                 mst[h].AddEdge(minKey);
+                mst[h].AddNext(ver, minKey);
                 graph[h].ChangeWeight(edgeIndexToRemove, 0);
-            } else {
+            }
+            else if (h == ver) {
+                mst[h].AddEdge(minKey);
+                mst[h].AddNext(u, minKey);
+                graph[h].ChangeWeight(edgeIndexToRemove, 0);
+            }
+            else {
                 mst[h].AddEdge(0);
             }
         }
