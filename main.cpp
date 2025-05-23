@@ -237,6 +237,12 @@ void GraphCreator(Vertex *graph ,int size, int density, int maxWeight, int probl
         std::cout<<"Density is wrong!!!"<<std::endl;
         exit(-2136);
     }
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < graph[i].GetEdgeSizes(); j++) {
+            std::cout<<graph[i].GetEdge(j)<<" ";
+        }
+        std::cout<<std::endl;
+    }
 }
 void FileReaderGraph(std::string filePath, int maxWeight, int problem, std::string output) {
     std::fstream file;
@@ -263,8 +269,7 @@ void FileReaderGraph(std::string filePath, int maxWeight, int problem, std::stri
         int weight = stoi(numberOfElementsString);
         FillGraph(graph,numberOfVertex,firstVertex,secondVertex,maxWeight,problem, false, weight);
     }
-    Vertex* mst_solution = MST::Prim(numberOfVertex, graph, maxWeight);
-    std::cout<<mst_solution[0].GetEdgeSizes()<<std::endl;
+    Vertex* mst_solution = MST::Kruskal(numberOfVertex, graph, maxWeight);
     SaveGraphToFile(mst_solution,output,numberOfVertex);
 
 }
@@ -376,8 +381,8 @@ int main(int argc, char* argv[]) {
             const std::string outputFile = argv[8];
             Vertex graph[size];
             GraphCreator(graph,size, density, maxWeight, problem);
-            MST::Prim(size, graph, maxWeight);
-
+            Vertex* mst = MST::Kruskal(size, graph, maxWeight);
+            SaveGraphToFile(mst, outputFile, size);
         }
     }
     else if (whichProgram == "--help1") {

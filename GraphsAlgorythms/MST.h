@@ -10,6 +10,7 @@
 class MST {
 public:
     static Vertex* Prim(int size, Vertex* graph, int maxWeight);
+    static Vertex* Kruskal(int size, Vertex* graph, int maxWeight);
 };
 
 
