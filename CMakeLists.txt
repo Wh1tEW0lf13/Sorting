@@ -15,4 +15,6 @@ add_executable(ProjectMrozo1 main.cpp
         GraphsAlgorythms/Vertex.h
         GraphsAlgorythms/MST.cpp
         GraphsAlgorythms/MST.h
+        GraphsAlgorythms/ShortestPath.cpp
+        GraphsAlgorythms/ShortestPath.h
 )

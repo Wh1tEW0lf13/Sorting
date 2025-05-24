@@ -67,23 +67,23 @@ struct Edge {
     int u, v, weight;
 };
 
-int find(int u, int* parent) {
-    if (parent[u] != u)
-        parent[u] = find(parent[u], parent);
-    return parent[u];
+int find(int u, Vector<int> *parent) {
+    if (parent->GetValue(u) != u)
+        parent->ChangeValue(u,find(parent->GetValue(u), parent));
+    return parent->GetValue(u);
 }
 
-void unite(int u, int v, int* parent, int* rank) {  //Connecting two vertex if cycle do not exists
+void unite(int u, int v, Vector<int> *parent, Vector<int> *rank) {  //Connecting two vertex if cycle do not exist
     u = find(u, parent);
     v = find(v, parent);
     if (u != v) {
-        if (rank[u] < rank[v]) {
-            parent[u] = v;
-        } else if (rank[u] > rank[v]) {
-            parent[v] = u;
+        if (rank->GetValue(u) < rank->GetValue(v)) {
+            parent->ChangeValue(u,v);
+        } else if (rank->GetValue(u) > rank->GetValue(v)) {
+            parent->ChangeValue(v,u);
         } else {
-            parent[v] = u;
-            rank[u]++;
+            parent->ChangeValue(v,u);
+            rank->ChangeValue(v,rank->GetValue(u) + 1);
         }
     }
 }
@@ -119,17 +119,17 @@ void sortEdges(Edge* edges, int edgeCount) {
 
 Vertex* MST::Kruskal(int size, Vertex* graph, int maxWeight) {
     Vertex* mst = new Vertex[size];
-    Edge* edges = new Edge[size * size]; // max liczba krawędzi
+    Edge* edges = new Edge[size * size];
     int edgeCount = 0;
 
-    // Zbieranie unikalnych krawędzi
+    //Deleting duplicate
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < graph[i].GetEdgeSizes(); j++) {
             int weight = graph[i].GetEdge(j);
             if (weight > 0) {
                 for (int k = 0; k < size; k++) {
                     if (k != i && graph[k].GetEdge(j) == weight) {
-                        if (i < k) { // uniknij duplikatu
+                        if (i < k) {
                             edges[edgeCount++] = { i, k, weight };
                         }
                         break;
@@ -139,23 +139,20 @@ Vertex* MST::Kruskal(int size, Vertex* graph, int maxWeight) {
         }
     }
     sortEdges(edges, edgeCount);
-    int* parent = new int[size];
-    int* rank = new int[size];
+    Vector<int> parent;
+    Vector<int> rank;
     for (int i = 0; i < size; i++) {
-        parent[i] = i;
-        rank[i] = 0;
+        parent.Add(i);
+        rank.Add(0);
     }
-
     int mstWeight = 0;
-    std::cout<<edgeCount<<std::endl;
     for (int i = 0; i < edgeCount; i++) {
         int u = edges[i].u;
         int v = edges[i].v;
         int w = edges[i].weight;
 
-        if (find(u, parent) != find(v, parent)) {
-            unite(u, v, parent, rank);
-
+        if (find(u, &parent) != find(v, &parent)) {
+            unite(u, v, &parent, &rank);
             mst[u].AddEdge(w);
             mst[u].AddNext(v, w);
 
@@ -163,9 +160,9 @@ Vertex* MST::Kruskal(int size, Vertex* graph, int maxWeight) {
             mst[v].AddNext(u, w);
 
             mstWeight += w;
-            for (int i = 0; i<size; i++) {
-                if (i != u && i != v) {
-                    mst[i].AddEdge(0);
+            for (int j = 0; j<size; j++) {
+                if (j != u && j != v) {
+                    mst[j].AddEdge(0);
                 }
             }
         }
@@ -174,8 +171,6 @@ Vertex* MST::Kruskal(int size, Vertex* graph, int maxWeight) {
     std::cout << "Calkowita waga MST: " << mstWeight << std::endl;
 
     delete[] edges;
-    delete[] parent;
-    delete[] rank;
 
     return mst;
 }

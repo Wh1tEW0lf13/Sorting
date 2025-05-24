@@ -52,3 +52,12 @@ void Vertex::RemoveEdge(int index) {
 void Vertex::ChangeWeight(int index, int weight) {
     this->_edges.ChangeValue(index, weight);
 }
+int Vertex::GetNeighbor(int index) {
+    return this->_nextVertex.GetValue(index);
+}
+int Vertex::GetWeight(int index) {
+    return this->_weight.GetValue(index);
+}
+int Vertex::GetNeighborSizes() {
+    return this->_nextVertex.GetSize();
+}

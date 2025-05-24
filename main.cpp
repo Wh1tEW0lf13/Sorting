@@ -7,6 +7,7 @@
 #include "Vector.h"
 #include "Timer.h"
 #include "GraphsAlgorythms/MST.h"
+#include "GraphsAlgorythms/ShortestPath.h"
 #include "GraphsAlgorythms/Vertex.h"
 #include "SortingAlgorythms/HeapifySort.h"
 #include "SortingAlgorythms/InsertionSort.h"
@@ -269,8 +270,14 @@ void FileReaderGraph(std::string filePath, int maxWeight, int problem, std::stri
         int weight = stoi(numberOfElementsString);
         FillGraph(graph,numberOfVertex,firstVertex,secondVertex,maxWeight,problem, false, weight);
     }
-    Vertex* mst_solution = MST::Kruskal(numberOfVertex, graph, maxWeight);
-    SaveGraphToFile(mst_solution,output,numberOfVertex);
+    for (int i = 0; i < numberOfVertex; i++) {
+        for (int j = 0; j < graph[i].GetEdgeSizes(); j++) {
+            std::cout<<graph[i].GetEdge(j)<<" ";
+        }
+        std::cout<<std::endl;
+    }
+    ShortestPath::Dijkstra(numberOfVertex,graph, 1,3);
+    //SaveGraphToFile(mst_solution,output,numberOfVertex);
 
 }
 int main(int argc, char* argv[]) {
