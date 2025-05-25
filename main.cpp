@@ -276,7 +276,7 @@ void FileReaderGraph(std::string filePath, int maxWeight, int problem, std::stri
         }
         std::cout<<std::endl;
     }
-    ShortestPath::Dijkstra(numberOfVertex,graph, 1,3);
+    ShortestPath::BellmanFord(numberOfVertex,graph, 1,3);
     //SaveGraphToFile(mst_solution,output,numberOfVertex);
 
 }
