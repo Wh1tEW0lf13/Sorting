@@ -22,14 +22,17 @@ class Vertex {
     bool GetInMST();
     void ChangeWeight(int index, int weight);
     int GetNeighbor(int index);
+    int GetPrevNeighbor(int index);
     int GetNeighborSizes();
-
+    void ChangeMSTWeight(int weight);
+    int GetMSTWeight();
 private:
     Vector<int> _edges;  //It creates in incident matrix
     Vector<int> _nextVertex;
     Vector<int> _prevVertex;
     Vector<int> _weight;
     bool _isInMST;
+    int _mstWeight;
 };
 
 

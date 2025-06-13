@@ -1,10 +1,10 @@
 //
 // Created by Wh1tEW0lf13 on 04.04.2025.
 //
-#include "../Vector.h"
+
 #ifndef QUICKSORT_H
 #define QUICKSORT_H
-
+#include "../Vector.h"
 template<typename T>
 class QuickSort {
 public:

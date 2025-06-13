@@ -1,10 +1,10 @@
 //
 // Created by Wh1tEW0lf13 on 11.04.2025.
 //
-#include "../Vector.h"
+
 #ifndef HEAPIFYSORT_H
 #define HEAPIFYSORT_H
-
+#include "../Vector.h"
 #endif //HEAPIFYSORT_H
 template<typename T>
 class HeapifySort {

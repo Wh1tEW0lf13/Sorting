@@ -42,7 +42,10 @@ Vector<T>::Vector() {
 
 template<typename T>
 Vector<T>::~Vector() {
-    delete[] border;    //Destroy border
+    if (border != NULL) {
+        delete [] border;//Destroy border
+        border = NULL;
+    }
 }
 
 template<typename T>

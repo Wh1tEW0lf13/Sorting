@@ -4,6 +4,7 @@
 
 #include "Vertex.h"
 bool _isInMST;
+int _mstWeight;
 Vector<int> _edges;
 Vector<int> _nextVertex;
 Vector<int> _prevVertex;
@@ -15,6 +16,7 @@ Vertex::Vertex() {
     this->_nextVertex;
     this-> _prevVertex;
     this->_weight;
+    this->_mstWeight = 0;
 }
 Vertex::~Vertex() {
 
@@ -55,9 +57,19 @@ void Vertex::ChangeWeight(int index, int weight) {
 int Vertex::GetNeighbor(int index) {
     return this->_nextVertex.GetValue(index);
 }
+int Vertex::GetPrevNeighbor(int index) {
+    return this->_prevVertex.GetValue(index);
+}
 int Vertex::GetWeight(int index) {
     return this->_weight.GetValue(index);
 }
 int Vertex::GetNeighborSizes() {
     return this->_nextVertex.GetSize();
 }
+void Vertex::ChangeMSTWeight(int weight) {
+    _mstWeight = weight;
+}
+int Vertex::GetMSTWeight() {
+    return _mstWeight;
+}
+

@@ -53,14 +53,7 @@ Vertex* MST::Prim(int size, Vertex* graph, int maxWeight) {
             }
         }
     }
-    for (int i = 0;i < size;++i) {
-        for (int j = 0; j < mst[0].GetEdgeSizes(); ++j) {
-            std::cout << mst[i].GetEdge(j)<<" ";
-        }
-        std::cout << std::endl;
-    }
-
-    std::cout << "Calkowita waga MST: " << mstWeight << std::endl;
+    mst->ChangeMSTWeight(mstWeight);
     return mst;
 }
 struct Edge {
@@ -167,8 +160,7 @@ Vertex* MST::Kruskal(int size, Vertex* graph, int maxWeight) {
             }
         }
     }
-
-    std::cout << "Calkowita waga MST: " << mstWeight << std::endl;
+    mst->ChangeMSTWeight(mstWeight);
 
     delete[] edges;
 

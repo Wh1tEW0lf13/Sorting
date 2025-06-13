@@ -62,10 +62,12 @@ void GraphHelper() {     //Explain how to start a program
     std::cout<<"For MST (e.g. 0 - all, 1 - Prim's, 2 - Kruskal's)"<<std::endl;
     std::cout<<"For shortest (e.g. 0 - all, 1 - Dijkstra's, 2 - Ford-Bellman's, 3 - Ford-Fulkerson's)"<<std::endl;
     std::cout<<"<size> Number of elements to generate (instance size)."<<std::endl;
+    std::cout<<"<density> Density of edges."<<std::endl;
+    std::cout<<"<count> How many times test should be repeated (with graph regen)."<<std::endl;
     std::cout<<"<outputFile> File where the benchmark results should be saved."<<std::endl<<std::endl;
 }
 template<class T>
-Vector<T> FileReaderBorder(std::string path) {  //Reading values from file
+Vector<T> FileReaderBorder(const std::string& path, int numberType) {  //Reading values from file
     std::fstream file;
     file.open(path, std::ios::in);
     if (!file.is_open()) {
@@ -79,21 +81,35 @@ Vector<T> FileReaderBorder(std::string path) {  //Reading values from file
     Vector<T> notSorted;
     for (int i = 0; i < numberOfElements; i++) {
         getline(file,numberOfElementsString);
-        notSorted.Add(std::stoi(numberOfElementsString));
+        if (numberType == 0) {
+            notSorted.Add(std::stoi(numberOfElementsString));
+        }
+        else if (numberType == 1) {
+            notSorted.Add(std::stof(numberOfElementsString));
+
+        }
+        else if (numberType == 2) {
+            notSorted.Add(std::stod(numberOfElementsString));
+        }
+        else {
+            char ch = numberOfElementsString[0];
+            notSorted.Add(ch);
+        }
     }
     file.close();
     return notSorted;
 }
-
 void SaveGraphToFile(Vertex* graph, std::string path, int size) {
-    std::ofstream file(path);
-    file<<size<<"\t"<<graph[0].GetEdgeSizes()<<std::endl;
+    std::ofstream file(path, std::ios::app);
+    file<<graph[0].GetEdgeSizes()<<"\t"<<size<<std::endl;
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < graph[i].GetEdgeSizes(); j++) {
             file<<graph[i].GetEdge(j)<<" ";
         }
         file<<std::endl;
     }
+    file<<"MST weight = "<<graph[0].GetMSTWeight()<<std::endl;
+    file<<"<===========================================================>"<<std::endl;
     file.close();
 }
 
@@ -192,36 +208,44 @@ static bool CheckIfCycle(int a, int b, Vertex *graph) {
     return true;
 }
 
-int FillGraph(Vertex *graph ,int size, int firstVertex, int secondVertex, int maxWeight, int problem, bool isTest, int value) {
+int FillGraph(Vertex *graph ,Vertex *copyGraph,int size, int firstVertex, int secondVertex, int maxWeight, int problem, bool isTest, int value) {
     if (isTest)
         value = std::rand() % (maxWeight-1) + 1;
     for (int j = 0; j < size; j++) {
             if (j == firstVertex) {
                 graph[j].AddEdge(value);
                 graph[j].AddNext(secondVertex,value);
+                copyGraph[j].AddEdge(value);
+                copyGraph[j].AddNext(secondVertex,value);
             }
             else if (j == secondVertex) {
                 if (problem==0) {
                     graph[j].AddEdge(value);
+                    graph[j].AddNext(firstVertex,value);
+                    copyGraph[j].AddEdge(value);
+                    copyGraph[j].AddNext(firstVertex,value);
                 }
                 else{
                     graph[j].AddEdge(-value);
                     graph[j].AddPrev(firstVertex);
+                    copyGraph[j].AddEdge(-value);
+                    copyGraph[j].AddPrev(firstVertex);
                 }
             }
             else {
                 graph[j].AddEdge(0);
+                copyGraph[j].AddEdge(0);
             }
         }
     return 1;
     }
 
-void GraphCreator(Vertex *graph ,int size, int density, int maxWeight, int problem) {
+void GraphCreator(Vertex *graph ,Vertex *copyGraph,int size, int density, int maxWeight, int problem) {
     int graphDensity = 0;
     srand(time(NULL));
     for (int i = 0; i < size-1; i++) {  //Creating simple consistent graph
         int randomVertex = rand() % (size-1-i) + i+1;
-        FillGraph(graph,size,i,randomVertex,maxWeight, problem, true, 0); //Creating incident matrix
+        FillGraph(graph,copyGraph,size,i,randomVertex,maxWeight, problem, true, 0); //Creating incident matrix
         graphDensity++;
     }
     if (density <= 100 && density > 0) {
@@ -229,7 +253,7 @@ void GraphCreator(Vertex *graph ,int size, int density, int maxWeight, int probl
             int firstRandomVertex = rand() % size;
             int secondRandomVertex = rand() % size;
             if (firstRandomVertex != secondRandomVertex&&CheckIfCycle(firstRandomVertex,secondRandomVertex, graph)) {
-                FillGraph(graph,size,firstRandomVertex,secondRandomVertex,maxWeight, problem, true, 0);
+                FillGraph(graph,copyGraph,size,firstRandomVertex,secondRandomVertex,maxWeight, problem, true, 0);
                 graphDensity++;
             }
         }
@@ -241,6 +265,20 @@ void GraphCreator(Vertex *graph ,int size, int density, int maxWeight, int probl
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < graph[i].GetEdgeSizes(); j++) {
             std::cout<<graph[i].GetEdge(j)<<" ";
+        }
+        std::cout<<std::endl;
+    }
+    std::cout<<std::endl;
+    for (int i = 0; i < size; i++) {
+        std::cout<<"Vertex "<<i<<": ";
+        for (int j = 0; j < graph[i].GetNeighborSizes(); j++) {
+            std::cout<<graph[i].GetNeighbor(j)<<", ";
+        }
+        if (problem==1) {
+            std::cout<<"/";
+            for (int j = 0; j < graph[i].GetNeighborSizes(); j++) {
+                std::cout<<graph[i].GetPrevNeighbor(j)<<", ";
+            }
         }
         std::cout<<std::endl;
     }
@@ -259,6 +297,7 @@ void FileReaderGraph(std::string filePath, int maxWeight, int problem, std::stri
     int numberOfEdges = stoi(numberOfElementsString.substr(0, tab));
     int numberOfVertex = stoi(numberOfElementsString.substr(tab+1, numberOfElementsString.length()-1));
     Vertex graph[numberOfVertex];
+    Vertex copyGraph[numberOfVertex];
     for (int i = 0; i < numberOfEdges; i++) {
         getline(file,numberOfElementsString);
         tab = numberOfElementsString.find('\t');
@@ -268,7 +307,7 @@ void FileReaderGraph(std::string filePath, int maxWeight, int problem, std::stri
         int secondVertex = stoi(numberOfElementsString.substr(0, tab));
         numberOfElementsString.erase(0, tab+1);
         int weight = stoi(numberOfElementsString);
-        FillGraph(graph,numberOfVertex,firstVertex,secondVertex,maxWeight,problem, false, weight);
+        FillGraph(graph,copyGraph,numberOfVertex,firstVertex,secondVertex,maxWeight,problem, false, weight);
     }
     for (int i = 0; i < numberOfVertex; i++) {
         for (int j = 0; j < graph[i].GetEdgeSizes(); j++) {
@@ -293,28 +332,28 @@ int main(int argc, char* argv[]) {
             const std::string outputFile = argv[6];
                 switch (dataType) {
                     case 0: {
-                        Vector<int> noSorted = FileReaderBorder<int>(inputFileOrSize);
+                        Vector<int> noSorted = FileReaderBorder<int>(inputFileOrSize, dataType);
                         SortType(&noSorted, algorithmType);
                         IfSorted(&noSorted);
                         SaveBorderToFile(&noSorted, outputFile);
                         break;
                     }
                     case 1: {
-                        Vector<float> noSorted = FileReaderBorder<float>(inputFileOrSize);
+                        Vector<float> noSorted = FileReaderBorder<float>(inputFileOrSize, dataType);
                         SortType(&noSorted, algorithmType);
                         IfSorted(&noSorted);
                         SaveBorderToFile(&noSorted, outputFile);
                         break;
                     }
                     case 2: {
-                        Vector<double> noSorted = FileReaderBorder<double>(inputFileOrSize);
+                        Vector<double> noSorted = FileReaderBorder<double>(inputFileOrSize, dataType);
                         SortType(&noSorted, algorithmType);
                         IfSorted(&noSorted);
                         SaveBorderToFile(&noSorted, outputFile);
                         break;
                     }
                     case 3: {
-                        Vector<char> noSorted = FileReaderBorder<char>(inputFileOrSize);
+                        Vector<char> noSorted = FileReaderBorder<char>(inputFileOrSize, dataType);
                         SortType(&noSorted, algorithmType);
                         IfSorted(&noSorted);
                         SaveBorderToFile(&noSorted, outputFile);
@@ -375,7 +414,7 @@ int main(int argc, char* argv[]) {
         const int maxWeight = 100;
         const std::string firstArg = argv[2];
         const int problem = std::stoi(argv[3]);
-        const std::string algorythmType = argv[4];
+        const int algorythmType = std::stoi(argv[4]);
         if (firstArg == "--file") {
             const std::string inputFile = argv[5];
             const std::string outputFile = argv[6];
@@ -386,10 +425,23 @@ int main(int argc, char* argv[]) {
             const int density = std::stoi(argv[6]);
             const int count = std::stoi(argv[7]);
             const std::string outputFile = argv[8];
-            Vertex graph[size];
-            GraphCreator(graph,size, density, maxWeight, problem);
-            Vertex* mst = MST::Kruskal(size, graph, maxWeight);
-            SaveGraphToFile(mst, outputFile, size);
+            for (int i = 0; i < count; i++) {
+                Vertex graph[size];
+                Vertex copyGraph[size];
+                GraphCreator(graph, copyGraph ,size, density, maxWeight, problem);
+
+                if (problem == 0) {
+                    if (algorythmType == 0 || algorythmType == 1) {
+                        Vertex* mst = MST::Prim(size, graph, maxWeight);
+                        SaveGraphToFile(mst, outputFile, size);
+                    }
+                    if (algorythmType == 0||algorythmType == 2) {
+                        Vertex* mst = MST::Kruskal(size, copyGraph, maxWeight);
+                        SaveGraphToFile(mst, outputFile, size);
+                    }
+                }
+            }
+
         }
     }
     else if (whichProgram == "--help1") {
