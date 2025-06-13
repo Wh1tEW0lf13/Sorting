@@ -26,6 +26,11 @@ class Vertex {
     int GetNeighborSizes();
     void ChangeMSTWeight(int weight);
     int GetMSTWeight();
+    void IsInShortestPath();
+    bool GetInSP();
+    void ChangeDestinationValue(int value);
+    int GetDestinationValue();
+    int GetPrevSizes();
 private:
     Vector<int> _edges;  //It creates in incident matrix
     Vector<int> _nextVertex;
@@ -33,6 +38,8 @@ private:
     Vector<int> _weight;
     bool _isInMST;
     int _mstWeight;
+    bool _isInShortestPath;
+    int _destinationWeight;
 };
 
 

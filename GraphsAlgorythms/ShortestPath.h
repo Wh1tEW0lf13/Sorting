@@ -9,8 +9,8 @@
 
 class ShortestPath {
 public:
-    static int Dijkstra(int size, Vertex* graph,int source, int destination);
-    static int BellmanFord(int size, Vertex* graph,int source, int destination);
+    static void Dijkstra(int size, Vertex* graph,int source, int destination, Vector<int>* sp);
+    static void BellmanFord(int size, Vertex* graph,int source, int destination, Vector<int>* sp);
 };
 
 

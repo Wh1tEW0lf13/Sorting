@@ -3,13 +3,16 @@
 //
 
 #include "ShortestPath.h"
-int ShortestPath::Dijkstra(int size, Vertex* graph, int source, int destination) {
+
+void ShortestPath::Dijkstra(int size, Vertex* graph, int source, int destination, Vector<int>* sp) {
     Vector<int> dist;
     Vector<bool> visited;
+    Vector<int> prev;
 
     for (int i = 0; i < size; i++) {
         dist.Add(INT_MAX);
         visited.Add(false);
+        prev.Add(-1);
     }
     dist.ChangeValue(source, 0);
 
@@ -22,35 +25,41 @@ int ShortestPath::Dijkstra(int size, Vertex* graph, int source, int destination)
             }
         }
 
-        if (dist.GetValue(u) == INT_MAX) break; //
-        visited.ChangeValue(u,true);
+        if (dist.GetValue(u) == INT_MAX) break;
+        visited.ChangeValue(u, true);
 
-        if (u == destination) break; // arrived
+        if (u == destination) break;
 
-        // Distance between two vertex
         for (int i = 0; i < graph[u].GetNeighborSizes(); i++) {
             int weight = graph[u].GetWeight(i);
             int neighbor = graph[u].GetNeighbor(i);
             if (weight > 0 && !visited.GetValue(neighbor) && dist.GetValue(u) + weight < dist.GetValue(neighbor)) {
                 dist.ChangeValue(neighbor, dist.GetValue(u) + weight);
+                prev.ChangeValue(neighbor, u);
             }
         }
     }
 
     int result = dist.GetValue(destination);
+    graph[destination].ChangeDestinationValue(result);
     if (result == INT_MAX) {
         std::cout << "There is no path from " << source << " to " << destination << std::endl;
     } else {
-        std::cout << "There is path from " << source << " to " << destination << ": " << result << std::endl;
+
+        for (int at = destination; at != -1; at = prev.GetValue(at)) {
+            sp->Add(at);
+        }
+        sp->Add(result);
     }
-    return result;
 }
 
-int ShortestPath::BellmanFord(int size, Vertex* graph, int source, int destination) {
+void ShortestPath::BellmanFord(int size, Vertex* graph, int source, int destination, Vector<int>* sp) {
     Vector<int> dist;
+    Vector<int> prev;
 
     for (int i = 0; i < size; i++) {
         dist.Add(INT_MAX);
+        prev.Add(-1);
     }
     dist.ChangeValue(source, 0);
 
@@ -63,12 +72,13 @@ int ShortestPath::BellmanFord(int size, Vertex* graph, int source, int destinati
 
                 if (dist.GetValue(u) != INT_MAX && dist.GetValue(u) + weight < dist.GetValue(v)) {
                     dist.ChangeValue(v, dist.GetValue(u) + weight);
+                    prev.ChangeValue(v, u);
                 }
             }
         }
     }
 
-    // Checking if there exist negative cycle
+    // Checking for negative weight cycle
     for (int u = 0; u < size; u++) {
         for (int j = 0; j < graph[u].GetNeighborSizes(); j++) {
             int v = graph[u].GetNeighbor(j);
@@ -76,16 +86,16 @@ int ShortestPath::BellmanFord(int size, Vertex* graph, int source, int destinati
 
             if (dist.GetValue(u) != INT_MAX && dist.GetValue(u) + weight < dist.GetValue(v)) {
                 std::cout << "Graph contains a negative weight cycle" << std::endl;
-                return INT_MAX;
             }
         }
     }
-
     int result = dist.GetValue(destination);
     if (result == INT_MAX) {
         std::cout << "There is no path from " << source << " to " << destination << std::endl;
     } else {
-        std::cout << "There is path from " << source << " to " << destination << ": " << result << std::endl;
+        for (int at = destination; at != -1; at = prev.GetValue(at)) {
+            sp->Add(at);
+        }
+        sp->Add(result);
     }
-    return result;
 }

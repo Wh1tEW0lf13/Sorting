@@ -4,7 +4,9 @@
 
 #include "Vertex.h"
 bool _isInMST;
+bool _isInShortestPath;
 int _mstWeight;
+int _destinationWeight;
 Vector<int> _edges;
 Vector<int> _nextVertex;
 Vector<int> _prevVertex;
@@ -17,6 +19,8 @@ Vertex::Vertex() {
     this-> _prevVertex;
     this->_weight;
     this->_mstWeight = 0;
+    this->_isInShortestPath = false;
+    this->_destinationWeight = 0;
 }
 Vertex::~Vertex() {
 
@@ -60,6 +64,9 @@ int Vertex::GetNeighbor(int index) {
 int Vertex::GetPrevNeighbor(int index) {
     return this->_prevVertex.GetValue(index);
 }
+int Vertex::GetPrevSizes() {
+    return this->_prevVertex.GetSize();
+}
 int Vertex::GetWeight(int index) {
     return this->_weight.GetValue(index);
 }
@@ -72,4 +79,15 @@ void Vertex::ChangeMSTWeight(int weight) {
 int Vertex::GetMSTWeight() {
     return _mstWeight;
 }
-
+void Vertex::IsInShortestPath() {
+    _isInShortestPath = true;
+}
+bool Vertex::GetInSP() {
+    return _isInShortestPath;
+}
+void Vertex::ChangeDestinationValue(int value) {
+    _destinationWeight = value;
+}
+int Vertex::GetDestinationValue() {
+    return _destinationWeight;
+}

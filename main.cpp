@@ -99,16 +99,25 @@ Vector<T> FileReaderBorder(const std::string& path, int numberType) {  //Reading
     file.close();
     return notSorted;
 }
-void SaveGraphToFile(Vertex* graph, std::string path, int size) {
+void SaveGraphToFile(Vertex* graph, std::string path, int size, int problem) {
     std::ofstream file(path, std::ios::app);
-    file<<graph[0].GetEdgeSizes()<<"\t"<<size<<std::endl;
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < graph[i].GetEdgeSizes(); j++) {
-            file<<graph[i].GetEdge(j)<<" ";
+        file<<graph[0].GetEdgeSizes()<<"\t"<<size<<std::endl;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < graph[i].GetEdgeSizes(); j++) {
+                file<<graph[i].GetEdge(j)<<" ";
+            }
+            file<<std::endl;
         }
         file<<std::endl;
-    }
-    file<<"MST weight = "<<graph[0].GetMSTWeight()<<std::endl;
+        for (int i = 0; i < size; i++) {
+            file<<"Vertex "<<i<<": ";
+            for (int j = 0; j < graph[i].GetNeighborSizes(); j++) {
+                file<<graph[i].GetNeighbor(j)<<", ";
+            }
+            file<<std::endl;
+        }
+        file<<std::endl;
+        file<<"MST weight = "<<graph[0].GetMSTWeight()<<std::endl;
     file<<"<===========================================================>"<<std::endl;
     file.close();
 }
@@ -272,12 +281,12 @@ void GraphCreator(Vertex *graph ,Vertex *copyGraph,int size, int density, int ma
     for (int i = 0; i < size; i++) {
         std::cout<<"Vertex "<<i<<": ";
         for (int j = 0; j < graph[i].GetNeighborSizes(); j++) {
-            std::cout<<graph[i].GetNeighbor(j)<<", ";
+            std::cout<<graph[i].GetNeighbor(j)<<": "<<graph[i].GetWeight(j)<<", ";
         }
         if (problem==1) {
-            std::cout<<"/";
-            for (int j = 0; j < graph[i].GetNeighborSizes(); j++) {
-                std::cout<<graph[i].GetPrevNeighbor(j)<<", ";
+            std::cout<<"|| ";
+            for (int j = 0; j < graph[i].GetPrevSizes(); j++) {
+                std::cout<<graph[i].GetPrevNeighbor(j)<<" ";
             }
         }
         std::cout<<std::endl;
@@ -315,9 +324,20 @@ void FileReaderGraph(std::string filePath, int maxWeight, int problem, std::stri
         }
         std::cout<<std::endl;
     }
-    ShortestPath::BellmanFord(numberOfVertex,graph, 1,3);
-    //SaveGraphToFile(mst_solution,output,numberOfVertex);
+}
+void SaveSPToFile(Vector<int>* sp, std::string path) {
+    std::ofstream file(path, std::ios::app);
+    file<<"Shortest path: "<<std::endl;
 
+    for (int i = sp->GetSize()-2; i >= 0; i--) {
+        if (i != 0)
+            file<<sp->GetValue(i)<<" -> ";
+        else
+            file<<sp->GetValue(i);
+    }
+    file<<std::endl<<"Cost of the path: "<<sp->GetValue(sp->GetSize()-1)<<std::endl;
+    file<<"<===========================================================>"<<std::endl;
+    file.close();
 }
 int main(int argc, char* argv[]) {
     std::string whichProgram;
@@ -429,19 +449,29 @@ int main(int argc, char* argv[]) {
                 Vertex graph[size];
                 Vertex copyGraph[size];
                 GraphCreator(graph, copyGraph ,size, density, maxWeight, problem);
-
                 if (problem == 0) {
                     if (algorythmType == 0 || algorythmType == 1) {
                         Vertex* mst = MST::Prim(size, graph, maxWeight);
-                        SaveGraphToFile(mst, outputFile, size);
+                        SaveGraphToFile(mst, outputFile, size, problem);
                     }
                     if (algorythmType == 0||algorythmType == 2) {
                         Vertex* mst = MST::Kruskal(size, copyGraph, maxWeight);
-                        SaveGraphToFile(mst, outputFile, size);
+                        SaveGraphToFile(mst, outputFile, size, problem);
+                    }
+                }
+                else if (problem == 1) {
+                    if (algorythmType == 0 || algorythmType == 1) {
+                        Vector<int> dijkstraPath;
+                        ShortestPath::Dijkstra(size, graph, 0, size-1,&dijkstraPath);
+                        SaveSPToFile(&dijkstraPath, outputFile);
+                    }
+                    if (algorythmType == 0||algorythmType == 2) {
+                        Vector<int> bellmanPath;
+                        ShortestPath::BellmanFord(size, graph, 0, size-1,&bellmanPath);
+                        SaveSPToFile(&bellmanPath, outputFile);
                     }
                 }
             }
-
         }
     }
     else if (whichProgram == "--help1") {
