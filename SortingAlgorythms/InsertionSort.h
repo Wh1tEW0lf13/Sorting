@@ -18,7 +18,7 @@ void InsertionSort<T>::InsertionSorting(Vector<T> *border) {
       int j = i-1;
       while (j >= 0) {
          if (border->GetValue(j) > border->GetValue(j+1)) {
-            int temp = border->GetValue(j);
+            T temp = border->GetValue(j);
             border->ChangeValue(j,border->GetValue(j+1));
             border->ChangeValue(j+1,temp);
             j--;
