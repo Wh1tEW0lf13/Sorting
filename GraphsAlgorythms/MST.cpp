@@ -3,7 +3,7 @@
 #include "Vertex.h"
 #include "../SortingAlgorythms/QuickSort.h"
 
-Vertex* MST::Prim(int size, Vertex* graph, int maxWeight) {
+Vertex* MST::PrimMatrix(int size, Vertex* graph) {
     int mstWeight = 0;
     Vertex* mst = new Vertex[size];
 
@@ -12,7 +12,7 @@ Vertex* MST::Prim(int size, Vertex* graph, int maxWeight) {
     for (int i = 0; i < size - 1; i++) {
         int u = -1;
         int ver = -1;
-        int minKey = maxWeight + 1;
+        int minKey = INT_MAX;
         int edgeIndexToRemove = -1;
 
 
@@ -56,6 +56,60 @@ Vertex* MST::Prim(int size, Vertex* graph, int maxWeight) {
     mst->ChangeMSTWeight(mstWeight);
     return mst;
 }
+Vertex* MST::PrimList(int size, Vertex* graph) {
+    Vector<int> parent;
+    Vector<int> key;
+
+    for (int i = 0; i < size; i++) {
+        parent.Add(-1);
+        key.Add(INT_MAX);
+    }
+    key.ChangeValue(0,0);
+
+    for (int count = 0; count < size - 1; ++count) {
+        int u = -1;
+        int minKey = INT_MAX;
+
+        for (int v = 0; v < size; ++v) {
+            if (!graph[v].GetInMST() && key.GetValue(v) < minKey) {
+                minKey = key.GetValue(v);
+                u = v;
+            }
+        }
+
+        graph[u].InMST();
+
+        // Zaktualizuj sąsiadów
+        for (int i = 0; i < graph[u].GetNeighborSizes(); i++) {
+            int v = graph[u].GetNeighbor(i);
+            int weight = graph[u].GetWeight(i);
+            if (!graph[v].GetInMST() && weight < key.GetValue(v)) {
+                key.ChangeValue(v, weight);
+                parent.ChangeValue(v, u);
+            }
+        }
+    }
+    // Buduj MST
+    Vertex* mst = new Vertex[size];
+    int mstWeight = 0;
+    for (int v = 1; v < size; ++v) {
+        int u = parent.GetValue(v);
+        int weight = key.GetValue(v);
+        mstWeight += weight;
+        mst[u].AddNext(v, weight);
+        mst[v].AddNext(u, weight);
+        for (int w = 0; w < size; w++) {
+            if (w == v || w == u) {
+                mst[w].AddEdge(weight);
+            }
+            else
+                mst[w].AddEdge(0);
+        }
+    }
+    mst->ChangeMSTWeight(mstWeight);
+    return mst;
+}
+
 struct Edge {
     int u, v, weight;
 };
@@ -110,7 +164,7 @@ void sortEdges(Edge* edges, int edgeCount) {
     quickSort(edges, 0, edgeCount - 1);
 }
 
-Vertex* MST::Kruskal(int size, Vertex* graph, int maxWeight) {
+Vertex* MST::KruskalMatrix(int size, Vertex* graph, int maxWeight) {
     Vertex* mst = new Vertex[size];
     Edge* edges = new Edge[size * size];
     int edgeCount = 0;
@@ -128,6 +182,57 @@ Vertex* MST::Kruskal(int size, Vertex* graph, int maxWeight) {
                         break;
                     }
                 }
+            }
+        }
+    }
+    sortEdges(edges, edgeCount);
+    Vector<int> parent;
+    Vector<int> rank;
+    for (int i = 0; i < size; i++) {
+        parent.Add(i);
+        rank.Add(0);
+    }
+    int mstWeight = 0;
+    for (int i = 0; i < edgeCount; i++) {
+        int u = edges[i].u;
+        int v = edges[i].v;
+        int w = edges[i].weight;
+
+        if (find(u, &parent) != find(v, &parent)) {
+            unite(u, v, &parent, &rank);
+            mst[u].AddEdge(w);
+            mst[u].AddNext(v, w);
+
+            mst[v].AddEdge(w);
+            mst[v].AddNext(u, w);
+
+            mstWeight += w;
+            for (int j = 0; j<size; j++) {
+                if (j != u && j != v) {
+                    mst[j].AddEdge(0);
+                }
+            }
+        }
+    }
+    mst->ChangeMSTWeight(mstWeight);
+
+    delete[] edges;
+
+    return mst;
+}
+
+Vertex* MST::KruskalList(int size, Vertex* graph, int maxWeight) {
+    Vertex* mst = new Vertex[size];
+    Edge* edges = new Edge[size * size];
+    int edgeCount = 0;
+    //Deleting duplicate
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < graph[i].GetNeighborSizes(); j++) {
+            int neighbor = graph[i].GetNeighbor(j);
+            int weight = graph[i].GetWeight(j);
+
+            if (i < neighbor) {
+                edges[edgeCount++] = { i, neighbor, weight };
             }
         }
     }

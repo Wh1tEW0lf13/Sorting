@@ -4,20 +4,20 @@
 
 #include "Timer.h"
 #include <chrono>
-std::chrono::milliseconds startTime, stopTime, timeResult;
+std::chrono::microseconds startTime, stopTime, timeResult;
 void Timer::reset() {
-    startTime = stopTime = timeResult = std::chrono::milliseconds(0);
+    startTime = stopTime = timeResult = std::chrono::microseconds(0);
 }
 Timer::Timer() {
     reset();
 }
 
 int Timer::start() {
-    startTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+    startTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch());
     return 1;
 }
 int Timer::stop() {
-    stopTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+    stopTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch());
     timeResult = stopTime-startTime;
     return 1;
 }
