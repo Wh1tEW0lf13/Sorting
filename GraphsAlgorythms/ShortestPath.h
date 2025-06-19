@@ -13,8 +13,6 @@ public:
     static void DijkstraMatrix(int size, Vertex* graph,int source, int destination, Vector<int>* sp);
     static void BellmanFordList(int size, Vertex* graph,int source, int destination, Vector<int>* sp);
     static void BellmanFordMatrix(int size, Vertex* graph,int source, int destination, Vector<int>* sp);
-private:
-    static int GetNeighborFromMatrix(int vertex, int weight);
 };
 
 

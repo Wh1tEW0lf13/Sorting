@@ -215,6 +215,12 @@ void SortType(Vector<T> *border, int algorithmType) {   //Here I check which typ
 int FillGraph(Vertex *graph ,Vertex *copyGraph,int size, int firstVertex, int secondVertex, int maxWeight, int problem, bool isTest, int value) {
     if (isTest)
         value = std::rand() % (maxWeight-1) + 1;
+    if (firstVertex != secondVertex) {
+        graph[firstVertex].AddEdge(value);
+        graph[firstVertex].AddNext(secondVertex,value);
+        graph[secondVertex].AddEdge(-value);
+        graph[secondVertex].AddPrev(firstVertex);
+    }
     for (int j = 0; j < size; j++) {
             if (j == firstVertex) {
                 graph[j].AddEdge(value);
@@ -241,81 +247,76 @@ int FillGraph(Vertex *graph ,Vertex *copyGraph,int size, int firstVertex, int se
                 copyGraph[j].AddEdge(0);
             }
         }
+
     return 1;
     }
 
-void GraphCreator(Vertex *graph, Vertex *copyGraph, int size, int density, int maxWeight, int problem) {
-    if (density <= 0 || density > 100) {
-        std::cout << "Density is wrong!!!" << std::endl;
-        exit(-2136);
+static bool CheckIfMultiply(int a, int b, Vertex *graph) {
+    for (int i = 0; i < graph[0].GetEdgeSizes(); i++) {
+        if (graph[a].GetEdge(i) != 0 && graph[b].GetEdge(i) != 0) {
+            return false;
+        }
     }
-
+    return true;
+}
+void GraphCreator(Vertex *graph ,Vertex *copyGraph,int size, int density, int maxWeight, int problem) {
     int graphDensity = 0;
-    srand(time(NULL));
-    Vector<int> availableVertex[size];
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            availableVertex[i].Add(j);
-        }
-    }
-    // Creating connected graph
-    for (int i = 0; i < size - 1; i++) {
-        int randomVertex = rand() % (size - 1 - i) + i + 1;
-        availableVertex[i].Remove(availableVertex[i].Find(randomVertex));
-        if (problem==0) {
-            availableVertex[randomVertex].Remove(availableVertex[randomVertex].Find(i));
-        }
-        FillGraph(graph, copyGraph, size, i, randomVertex, maxWeight, problem, true, 0);
+    for (int i = 0; i < size-1; i++) {  //Creating simple consistent graph
+        int randomVertex = rand() % (size-1-i) + i+1;
+        FillGraph(graph,copyGraph,size,i,randomVertex,maxWeight, problem, true, 0);
         graphDensity++;
     }
-
-    int maxEdges = (size * (size - 1)) / 2;
-    int targetEdges = (int)(maxEdges * (density / 100.0));
-
-    while (graphDensity < targetEdges) {
-            int first = rand () % size;
-            int actualSize = availableVertex[first].GetSize();
-            if (actualSize > 0) {
-                int index = rand() % actualSize;
-                int second = availableVertex[first].GetValue(index);
-                availableVertex[first].Remove(index);
-                if (problem==0) {
-                    availableVertex[second].Remove(availableVertex[second].Find(first));
-                }
-                FillGraph(graph, copyGraph, size, first, second, maxWeight, problem, true, 0);
+    if (density <= 100 && density > 0) {
+        while((size*(size-1)/2)*(density/100.0)>graphDensity) {
+            int firstRandomVertex = rand() % size;
+            int secondRandomVertex = rand() % size;
+            if (firstRandomVertex != secondRandomVertex&&CheckIfMultiply(firstRandomVertex,secondRandomVertex, graph)) {
+                FillGraph(graph,copyGraph,size,firstRandomVertex,secondRandomVertex,maxWeight, problem, true, 0);
                 graphDensity++;
-        }
-    }/*
-    // Wyświetlanie macierzy incydencji
-    int edgeSize = graph[0].GetEdgeSizes();
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < edgeSize; j++) {
-            std::cout << graph[i].GetEdge(j) << " ";
-        }
-        std::cout << std::endl;
-    }
-
-    std::cout << std::endl;
-
-
-    for (int i = 0; i < size; i++) {
-        std::cout << "Vertex " << i << ": ";
-        int neighborSize = graph[i].GetNeighborSizes();
-        for (int j = 0; j < neighborSize; j++) {
-            std::cout << graph[i].GetNeighbor(j) << ": " << graph[i].GetWeight(j) << ", ";
-        }
-
-        if (problem == 1) {
-            std::cout << "|| ";
-            int prevSize = graph[i].GetPrevSizes();
-            for (int j = 0; j < prevSize; j++) {
-                std::cout << graph[i].GetPrevNeighbor(j) << " ";
             }
         }
-        std::cout << std::endl;
-    }*/
+    }
+    else{
+        std::cout<<"Density is wrong!!!"<<std::endl;
+        exit(-2136);
+    }
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < graph[i].GetEdgeSizes(); j++) {
+            std::cout<<graph[i].GetEdge(j)<<" ";
+        }
+        std::cout<<std::endl;
+    }
+    std::cout<<std::endl;
+    for (int i = 0; i < size; i++) {
+        std::cout<<"Vertex "<<i<<": ";
+        for (int j = 0; j < graph[i].GetNeighborSizes(); j++) {
+            std::cout<<graph[i].GetNeighbor(j)<<": "<<graph[i].GetWeight(j)<<", ";
+        }
+        if (problem==1) {
+            std::cout<<"|| ";
+            for (int j = 0; j < graph[i].GetPrevSizes(); j++) {
+                std::cout<<graph[i].GetPrevNeighbor(j)<<" ";
+            }
+        }
+        std::cout<<std::endl;
+    }
 }
-void FileReaderGraph(std::string filePath, int maxWeight, int problem, std::string output) {
+void SaveSPToFile(Vector<int>* sp, std::string path) {
+    std::ofstream file(path, std::ios::app);
+        if (sp->GetSize()>1) {
+            file<<"Shortest path: "<<std::endl;
+            for (int i = sp->GetSize()-2; i >= 0; i--) {
+                if (i != 0)
+                    file<<sp->GetValue(i)<<" -> ";
+                else
+                    file<<sp->GetValue(i);
+            }
+            file<<std::endl<<"Cost of the path: "<<sp->GetValue(sp->GetSize()-1)<<std::endl;
+            file<<"<===========================================================>"<<std::endl;
+        }
+    file.close();
+}
+void FileReaderGraph(std::string filePath, int maxWeight, int problem, int algorythmType, std::string outputFile) {
     std::fstream file;
     file.open(filePath, std::ios::in);
     std::cout<<"File opened."<<std::endl;
@@ -328,6 +329,7 @@ void FileReaderGraph(std::string filePath, int maxWeight, int problem, std::stri
     int tab = numberOfElementsString.find('\t');
     int numberOfEdges = stoi(numberOfElementsString.substr(0, tab));
     int numberOfVertex = stoi(numberOfElementsString.substr(tab+1, numberOfElementsString.length()-1));
+    Timer timer;
     Vertex graph[numberOfVertex];
     Vertex copyGraph[numberOfVertex];
     for (int i = 0; i < numberOfEdges; i++) {
@@ -341,26 +343,75 @@ void FileReaderGraph(std::string filePath, int maxWeight, int problem, std::stri
         int weight = stoi(numberOfElementsString);
         FillGraph(graph,copyGraph,numberOfVertex,firstVertex,secondVertex,maxWeight,problem, false, weight);
     }
+    //Writing graph to the console
     for (int i = 0; i < numberOfVertex; i++) {
         for (int j = 0; j < graph[i].GetEdgeSizes(); j++) {
             std::cout<<graph[i].GetEdge(j)<<" ";
         }
         std::cout<<std::endl;
     }
-}
-void SaveSPToFile(Vector<int>* sp, std::string path) {
-    std::ofstream file(path, std::ios::app);
-    file<<"Shortest path: "<<std::endl;
-
-    for (int i = sp->GetSize()-2; i >= 0; i--) {
-        if (i != 0)
-            file<<sp->GetValue(i)<<" -> ";
-        else
-            file<<sp->GetValue(i);
+    std::cout<<std::endl;
+    for (int i = 0; i < numberOfVertex; i++) {
+        std::cout<<"Vertex "<<i<<": ";
+        for (int j = 0; j < graph[i].GetNeighborSizes(); j++) {
+            std::cout<<graph[i].GetNeighbor(j)<<": "<<graph[i].GetWeight(j)<<", ";
+        }
+        if (problem==1) {
+            std::cout<<"|| ";
+            for (int j = 0; j < graph[i].GetPrevSizes(); j++) {
+                std::cout<<graph[i].GetPrevNeighbor(j)<<" ";
+            }
+        }
+        std::cout<<std::endl;
     }
-    file<<std::endl<<"Cost of the path: "<<sp->GetValue(sp->GetSize()-1)<<std::endl;
-    file<<"<===========================================================>"<<std::endl;
-    file.close();
+    if (problem == 0) {
+        if (algorythmType == 0 || algorythmType == 1) {
+            timer.start();
+            Vertex* mst = MST::PrimList(numberOfVertex, graph);
+            timer.stop();
+            std::string information = "PrimList "+std::to_string(numberOfVertex)+" "+std::to_string(problem)+": ";
+            SaveTimeToFile(timer.result(),"time.txt", information);
+            SaveGraphToFile(mst, outputFile, numberOfVertex, problem);
+        }
+        if (algorythmType == 0||algorythmType == 2) {
+            timer.start();
+            Vertex* mst = MST::KruskalList(numberOfVertex, copyGraph, maxWeight);
+            timer.stop();
+            std::string information = "KruskalMatrix "+std::to_string(numberOfVertex)+" "+std::to_string(problem)+": ";
+            SaveTimeToFile(timer.result(),"time.txt", information);
+            SaveGraphToFile(mst, outputFile, numberOfVertex, problem);
+        }
+    }
+    else if (problem == 1) {
+        int startVertex = -1;
+        int endVertex = -1;
+        while (startVertex<0 || startVertex>=numberOfVertex) {
+            std::cout<<"Pick your start vertex: ";
+            std::cin>>startVertex;
+        }
+        while (endVertex<0 || endVertex>=numberOfVertex) {
+            std::cout<<"Pick your end vertex: ";
+            std::cin>>endVertex;
+        }
+        if (algorythmType == 0||algorythmType == 1) {
+            Vector<int> dijkstraPath;
+            timer.start();
+            ShortestPath::DijkstraList(numberOfVertex, graph, startVertex, endVertex,&dijkstraPath);
+            timer.stop();
+            std::string information = "DjikstraList "+std::to_string(numberOfVertex)+" "+std::to_string(problem)+": ";
+            SaveTimeToFile(timer.result(),"time.txt", information);
+            SaveSPToFile(&dijkstraPath, outputFile);
+        }
+        if ((algorythmType == 0||algorythmType == 2)) {
+            Vector<int> bellmanPath;
+            timer.start();
+            ShortestPath::BellmanFordMatrix(numberOfVertex, copyGraph, startVertex, endVertex,&bellmanPath);
+            timer.stop();
+            std::string information = "BellmanMatrix "+std::to_string(numberOfVertex)+" "+std::to_string(problem)+": ";
+            SaveTimeToFile(timer.result(),"time.txt", information);
+            SaveSPToFile(&bellmanPath, outputFile);
+        }
+    }
 }
 int main(int argc, char* argv[]) {
     std::string whichProgram;
@@ -460,55 +511,70 @@ int main(int argc, char* argv[]) {
         if (firstArg == "--file") {
             const std::string inputFile = argv[5];
             const std::string outputFile = argv[6];
-            FileReaderGraph(inputFile, 0 ,problem,outputFile);
+            FileReaderGraph(inputFile, 0 ,problem,algorythmType,outputFile);
         }
         else if (firstArg == "--test") {
+            srand(time(nullptr));
             const int size = std::stoi(argv[5]);
             const int density = std::stoi(argv[6]);
             const int count = std::stoi(argv[7]);
             const std::string outputFile = argv[8];
             const int maxWeight = std::stoi(argv[9]);
             Timer timer;
-            int densityTab[3]={25,50,99};
-            int sizeTab[7]={80,100,120,140,160,180,200};
-            for (int x = 0; x < 7; x++) {
-             for (int y = 0; y < 3; y++) {
-               for (int i = 0; i < count; i++) {
-                Vertex graph[sizeTab[x]];
-                Vertex copyGraph[sizeTab[x]];
-                GraphCreator(graph, copyGraph ,sizeTab[x], densityTab[y], maxWeight, problem);
+            int startVertex = -1;
+            int endVertex = -1;
+            if (problem == 1) {
+                std::cout<<"Pick your start vertex: ";
+                while (startVertex<0 || startVertex>=size) {
+                    std::cin>>startVertex;
+                }
+                std::cout<<"Pick your end vertex: ";
+                while (endVertex<0 || endVertex>=size) {
+                    std::cin>>endVertex;
+                }
+            }
+            for (int i = 0; i < count; i++) {
+                Vertex graph[size];
+                Vertex copyGraph[size];
+                GraphCreator(graph, copyGraph ,size, density, maxWeight, problem);
                 if (problem == 0) {
                     if (algorythmType == 0 || algorythmType == 1) {
                         timer.start();
-                        Vertex* mst = MST::PrimList(sizeTab[x], graph);
+                        Vertex* mst = MST::PrimList(size, graph);
                         timer.stop();
-                        std::string information = "PrimList "+std::to_string(sizeTab[x])+" "+ std::to_string(densityTab[y])+" "+std::to_string(problem)+": ";
-                        SaveTimeToFile(timer.result(),"C:\\Users\\Wh1tEW0lf13\\Desktop\\Studia\\ProjectMrozo1\\time.txt", information);
-                        SaveGraphToFile(mst, outputFile, sizeTab[x], problem);
+                        std::string information = "PrimList "+std::to_string(size)+" "+ std::to_string(density)+" "+std::to_string(problem)+": ";
+                        SaveTimeToFile(timer.result(),"time.txt", information);
+                        SaveGraphToFile(mst, outputFile, size, problem);
                     }
                     if (algorythmType == 0||algorythmType == 2) {
                         timer.start();
-                        Vertex* mst = MST::KruskalList(sizeTab[x], copyGraph, maxWeight);
+                        Vertex* mst = MST::KruskalList(size, copyGraph, maxWeight);
                         timer.stop();
-                        std::string information = "KruskalList "+std::to_string(sizeTab[x])+" "+ std::to_string(densityTab[y])+" "+std::to_string(problem)+": ";
-                        SaveTimeToFile(timer.result(),"C:\\Users\\Wh1tEW0lf13\\Desktop\\Studia\\ProjectMrozo1\\time.txt", information);
-                        SaveGraphToFile(mst, outputFile, sizeTab[x], problem);
+                        std::string information = "KruskalMatrix "+std::to_string(size)+" "+ std::to_string(density)+" "+std::to_string(problem)+": ";
+                        SaveTimeToFile(timer.result(),"time.txt", information);
+                        SaveGraphToFile(mst, outputFile, size, problem);
                     }
                 }
                 else if (problem == 1) {
-                    if (algorythmType == 0 || algorythmType == 1) {
+                    if (algorythmType == 0||algorythmType == 1) {
                         Vector<int> dijkstraPath;
-                        ShortestPath::DijkstraMatrix(size, graph, 0, size-1,&dijkstraPath);
+                        timer.start();
+                        ShortestPath::DijkstraList(size, graph, startVertex, endVertex,&dijkstraPath);
+                        timer.stop();
+                        std::string information = "DjikstraList "+std::to_string(size)+" "+ std::to_string(density)+" "+std::to_string(problem)+": ";
+                        SaveTimeToFile(timer.result(),"time.txt", information);
                         SaveSPToFile(&dijkstraPath, outputFile);
                     }
-                    if (algorythmType == 0||algorythmType == 2) {
+                    if ((algorythmType == 0||algorythmType == 2)) {
                         Vector<int> bellmanPath;
-                        ShortestPath::BellmanFordMatrix(size, graph, 0, size-1,&bellmanPath);
+                        timer.start();
+                        ShortestPath::BellmanFordMatrix(size, copyGraph, startVertex, endVertex,&bellmanPath);
+                        timer.stop();
+                        std::string information = "BellmanMatrix "+std::to_string(size)+" "+ std::to_string(density)+" "+std::to_string(problem)+": ";
+                        SaveTimeToFile(timer.result(),"time.txt", information);
                         SaveSPToFile(&bellmanPath, outputFile);
                     }
                 }
-            }
-            }
             }
         }
     }

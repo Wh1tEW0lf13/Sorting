@@ -8,7 +8,7 @@ void ShortestPath::DijkstraList(int size, Vertex* graph, int source, int destina
     Vector<int> dist;
     Vector<bool> visited;
     Vector<int> prev;
-
+    int numberOfVisitedVertex = 0;
     for (int i = 0; i < size; i++) {
         dist.Add(INT_MAX);
         visited.Add(false);
@@ -24,9 +24,9 @@ void ShortestPath::DijkstraList(int size, Vertex* graph, int source, int destina
                 u = v;
             }
         }
-
         if (dist.GetValue(u) == INT_MAX) break;
         visited.ChangeValue(u, true);
+        numberOfVisitedVertex++;
 
         if (u == destination) break;
 
@@ -39,18 +39,16 @@ void ShortestPath::DijkstraList(int size, Vertex* graph, int source, int destina
             }
         }
     }
-
     int result = dist.GetValue(destination);
     graph[destination].ChangeDestinationValue(result);
     if (result == INT_MAX) {
         std::cout << "There is no path from " << source << " to " << destination << std::endl;
     } else {
-
         for (int at = destination; at != -1; at = prev.GetValue(at)) {
             sp->Add(at);
         }
-        sp->Add(result);
     }
+    sp->Add(result);
 }
 void ShortestPath::DijkstraMatrix(int size, Vertex* graph, int source, int destination, Vector<int>* sp) {
     Vector<int> dist;
@@ -77,14 +75,6 @@ void ShortestPath::DijkstraMatrix(int size, Vertex* graph, int source, int desti
         visited.ChangeValue(u, true);
 
         if (u == destination) break;
-        /*for (int i = 0; i < graph[u].GetNeighborSizes(); i++) {
-            int weight = graph[u].GetWeight(i);
-            int neighbor = graph[u].GetNeighbor(i);
-            if (weight > 0 && !visited.GetValue(neighbor) && dist.GetValue(u) + weight < dist.GetValue(neighbor)) {
-                dist.ChangeValue(neighbor, dist.GetValue(u) + weight);
-                prev.ChangeValue(neighbor, u);
-            }
-        }*/
         for (int i = 0; i < graph[u].GetEdgeSizes(); i++) {
             if (graph[u].GetEdge(i)>0) {
                 int weight = graph[u].GetEdge(i);
@@ -111,8 +101,8 @@ void ShortestPath::DijkstraMatrix(int size, Vertex* graph, int source, int desti
         for (int at = destination; at != -1; at = prev.GetValue(at)) {
             sp->Add(at);
         }
-        sp->Add(result);
     }
+    sp->Add(result);
 }
 
 void ShortestPath::BellmanFordList(int size, Vertex* graph, int source, int destination, Vector<int>* sp) {
@@ -158,8 +148,8 @@ void ShortestPath::BellmanFordList(int size, Vertex* graph, int source, int dest
         for (int at = destination; at != -1; at = prev.GetValue(at)) {
             sp->Add(at);
         }
-        sp->Add(result);
     }
+    sp->Add(result);
 }
 void ShortestPath::BellmanFordMatrix(int size, Vertex* graph, int source, int destination, Vector<int>* sp) {
     Vector<int> dist;
@@ -217,6 +207,6 @@ void ShortestPath::BellmanFordMatrix(int size, Vertex* graph, int source, int de
         for (int at = destination; at != -1; at = prev.GetValue(at)) {
             sp->Add(at);
         }
-        sp->Add(result);
     }
+    sp->Add(result);
 }

@@ -37,6 +37,7 @@ Vertex* MST::PrimMatrix(int size, Vertex* graph) {
         }
         mstWeight += minKey;
         graph[u].InMST();
+        //MST building
         for (int h = 0; h < size; h++) {
             if (h == u) {
                 mst[h].AddEdge(minKey);
@@ -79,7 +80,6 @@ Vertex* MST::PrimList(int size, Vertex* graph) {
 
         graph[u].InMST();
 
-        // Zaktualizuj sąsiadów
         for (int i = 0; i < graph[u].GetNeighborSizes(); i++) {
             int v = graph[u].GetNeighbor(i);
             int weight = graph[u].GetWeight(i);
@@ -89,7 +89,7 @@ Vertex* MST::PrimList(int size, Vertex* graph) {
             }
         }
     }
-    // Buduj MST
+    //MST building
     Vertex* mst = new Vertex[size];
     int mstWeight = 0;
     for (int v = 1; v < size; ++v) {
@@ -193,6 +193,7 @@ Vertex* MST::KruskalMatrix(int size, Vertex* graph, int maxWeight) {
         rank.Add(0);
     }
     int mstWeight = 0;
+    //MST building
     for (int i = 0; i < edgeCount; i++) {
         int u = edges[i].u;
         int v = edges[i].v;
@@ -244,6 +245,7 @@ Vertex* MST::KruskalList(int size, Vertex* graph, int maxWeight) {
         rank.Add(0);
     }
     int mstWeight = 0;
+    //MST building
     for (int i = 0; i < edgeCount; i++) {
         int u = edges[i].u;
         int v = edges[i].v;
