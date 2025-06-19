@@ -9,8 +9,10 @@
 
 class MST {
 public:
-    static Vertex* Prim(int size, Vertex* graph, int maxWeight);
-    static Vertex* Kruskal(int size, Vertex* graph, int maxWeight);
+    static Vertex* PrimMatrix(int size, Vertex* graph);
+    static Vertex* PrimList(int size, Vertex* graph);
+    static Vertex* KruskalMatrix(int size, Vertex* graph, int maxWeight);
+    static Vertex* KruskalList(int size, Vertex* graph, int maxWeight);
 };
 
 

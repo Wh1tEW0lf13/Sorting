@@ -31,6 +31,8 @@ public:
 
     void BorderSaver(int *values, int size);
 
+    int Find(T value);
+
 };
 
 template<typename T>
@@ -62,16 +64,19 @@ void Vector<T>::BorderSaver(int *values, int size) {
 }
 template<typename T>
 void Vector<T>::Remove(int index) {
-    --size;
-    T* newBorder = new T[size];
+    if (index < 0 || index >= size) return;
+
+    T* newBorder = new T[size - 1];
     for (int i = 0; i < index; i++) {
         newBorder[i] = border[i];
     }
-    for (int i = index; i < size-1; i++) {
-        newBorder[i] = border[i+1];
+    for (int i = index + 1; i < size; i++) {
+        newBorder[i - 1] = border[i];
     }
+
     delete[] border;
     border = newBorder;
+    --size;
 }
 
 template<typename T>
@@ -130,7 +135,15 @@ template<typename T>
 void Vector<T>::ChangeValue(int pointer, T value) {
     border[pointer] = value;
 }
-
+template<typename T>
+int Vector<T>::Find(T value) {
+    for (int i = 0; i < size; i++) {
+        if (border[i] == value) {
+            return i;
+        }
+    }
+    return -1;
+}
 
 
 #endif
